@@ -22,6 +22,9 @@
 
 import Random
 Random.seed!(123456)
+
+#-
+
 using CairoMakie
 
 # ## Inclure du code
