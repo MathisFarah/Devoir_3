@@ -1,11 +1,15 @@
 # ---
-# title: Titre du travail
-# repository: tpoisot/BIO245-modele
+# title: Dynamique épidémique
+# repository: MathisFarah/Devoir_3
 # auteurs:
 #    - nom: Auteur
 #      prenom: Premier
 #      matricule: XXXXXXXX
 #      github: premierAuteur
+#    - nom: Moreau
+#      prenom: Maxim
+#      matricule: 20269875
+#      github: Max80780
 #    - nom: Auteur
 #      prenom: Deuxième
 #      matricule: XXXXXXXX
