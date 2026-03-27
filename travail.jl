@@ -13,8 +13,90 @@
 # ---
 
 # # Introduction
+# ## Mise en contexte
+# ## Mise en contexte
 
-# # Présentation du modèle
+# Alors, les maladies infectieuses peuvent se propager rapidement dans une population, surtout quand celle-ci ne possède pas une immunité déjà présente et est donc naive. Cela 
+# peut même mener à un nombre très élevé de décès, surtout lorsque la maladie a beaucoup d'effets néfastes et est donc grâve et virulente. La vitesse de propagation de celle-ci
+# dépend de divers variables comme le taux d’infection, la durée de la maladie chez un individu et des contacts entre individus. Il y a cependant des façons de contrer des 
+# épidémies, comme la vaccination et le dépistage, qui permettent de réduire le nombre d’individus susceptibles d'être malades et permettent d’identifier les personnes 
+# infectieuses afin d’intervenir de manière plus précise, et ce même sans symptômes appararents chez les individus. En contre partie, ces stratégies sont souvent limitées 
+# par des contraintes, comme un budget, ce qui force parfoit de faire le choix entre tester davantage ou vacciner plus d'individus. C'est donc dans ce contexte que les modèles
+# de simulation deviennent utiles pour comparer différentes stratégies et mieux comprendre leur impact sur la propagation d’une maladie.
+
+# ## Questions
+
+# Dans le modèle de dynamique épidémique de propagation d'une maladie infectieuses dans une population qui est naive, quelle stratégie, qui combine dépistage et vaccination, 
+# permet de minimaliser la mortalité dans la population tout en respectant une contrainte de budget limité à 21 000$? 
+# De plus, comment cette stratégie se compare à une situation où il y a absence d'interventation?
+
+# ## Hypothèses et résultats attendus
+
+# Donc, pour émettre certaines hypothèses, nous nous attendons qu'une stratégie de vaccination et dépistage va nécessairement réduire la mortalité par rapport à l'absence 
+# d'intervention. Comme les individus infectieux sont asymptomatiques, il va falloir cibler une stratégie où les tests de dépistage vont permettre de mieux cibler la 
+# vaccination et donc, d'être plus efficaces qu’une vaccination aléatoire seule sans dépistage pour ne pas dépasser notre budget. 
+
+# Alors, l'efficacité de la stratégie va surtout dépendre de l'utilisation du budget qui est limité, ce qui implique donc d'avoir un certain compromis entre le nombre de tests
+# et de vaccins. Il faut aussi garder en tête la variabilité des simulations vu que l’intervention débute seulement qu'après le premier décès et que le vaccin n’est actif 
+# qu’après deux jours, donc une partie de la propagation devrait tout de même se faire de façons aléatoire. 
+
+# On s’attend donc à une diminution de la mortalité grâce à notre stratégie, mais cela avec une certaine variabilité entre les simulations vu le caractère stochastique du modèle.
+
+# # Présentation du modèle (Contraintes du modèle)
+
+# ## Structure et dynamique épidémique
+
+# Alors, le modèle simule la dynamique épidémique de la propagation d’une maladie infectieuse dans une population de 3750 individus qui sont initialement naïfs, donc sans aucune 
+# immunité. Les individus sont répartis sur une lattice de taille -50, 50 sur les deux dimensions, il y aura donc des interactions entre voisins pour la propagation de la maladie.
+# Donc, la transmission de la maladie dépend d’un taux d’infection fixé à des probabilité de devenir infectieux par contact de 0,4 lors des contacts entre individus sains et 
+# infectieux. Une fois infecté, un individu reste infectieux pendant 21 jours qui finit toujours par le tuer au bout de ces 21 jours. Alors, un taux d'infection relativement 
+# élevé et une durée de l'infection durant longtemps peuvent être typiques de maladies infectieuses fortement transmissibles. Cela peut alors entrainer une propagation rapide
+# de la maladie dans une population qui est dite naive entre gens infectieux et ceux susceptibles de l'être par contact direct (Fraser et al, 2004).
+
+# ## Vaccination et tests de dépistage
+
+# Pour ce qui est du vaccin, celui-ci est entièrement efficace et donc les individus vaccinés ne peuvent plus être infectés et transmettent la maladie. Cependant, le vaccin 
+# n'est actif que deux jours après son administration, il y a donc un délai dans la protection. Cela représente le temps nécessaire au développement d’une réponse immunitaire 
+# après l’inoculation du vaccin, malgré que l'efficacité absolue de celui-ci est une simplification des vaccins qui ne sont jamais parfaits, mais souvent proche de l'être (ex:95%)
+# (Polack et al, 2020). Les individus infectieux sont asymptomatiques, comme il est possible pour certaines maladies (He et al, 2020), donc il faut utiliser des tests de 
+# dépistage antigéniqes rapides pour les détecter. Ces test ont une efficacité de 95%, mais ils ne permettent pas de connaître depuis combien de temps un individu est infecté. 
+# Cela représente bien le fait que des tests antigéniqes rapides peuvent être imparfaits vu par exemple des faux négatifs (Scohy et al, 2020). On ne peut donc connaître 
+# la prévalence de la maladie dans la population autrement que par des tests.
+
+# ## Contraintes budgétaire et d'intervention
+
+# Finalement, les interventions pour contrer la propagation de l'épidémie sont resstreintes par un budget total de 21 000$, chaque vaccin coûte 17$ et chaque test de dépistage
+# coûte 4$. Une fois le budget épuisé, il n’est plus possible de tester ou de vacciner. Cela est courant en santé publique d'avoir à faire avec un budget limité ce qui limite 
+# les ressources pour les mesures d'interventions pour contrer l'épidémie. Il faut donc optimiser les ressources disponibles pour limiter la propagation de la maladie et limité 
+# la mortalité (Chalkidou et al, 2016). Finalement, les interventions pour contrer l'épidémie comme la vaccination et les tests ne peuvent commencer qu’après l’apparition du 
+# premier décès dans la population. Cela représente le fait qu'il existe un délai entre la détection des premiers cas et le début des mesures d'interventions contre 
+# l'épidémie (Peak et al, 2017).
+
+# # Références
+
+# Chalkidou, K., Glassman, A., Marten, R., Vega, J., Teerawattananon, Y., Tritasavit, N., Gyansa-Lutterodt, M., Seiter, A., Kieny, M. P., Hofman, K. et Culyer, A. J. (2016). 
+# Priority-setting for achieving universal health coverage. _Bulletin of the World Health Organization_, 94(6), 462‑467. https://doi.org/10.2471/BLT.15.155721
+
+# Fraser, C., Riley, S., Anderson, R. M. et Ferguson, N. M. (2004). Factors that make an infectious disease outbreak controllable. _Proceedings of the National Academy of 
+# Sciences_, 101(16), 6146‑6151. https://doi.org/10.1073/pnas.0307506101
+
+# He, X., Lau, E. H. Y., Wu, P., Deng, X., Wang, J., Hao, X., Lau, Y. C., Wong, J. Y., Guan, Y., Tan, X., Mo, X., Chen, Y., Liao, B., Chen, W., Hu, F., Zhang, Q., Zhong, M., Wu, 
+# Y., Zhao, L., … Leung, G. M. (2020). Temporal dynamics in viral shedding and transmissibility of COVID-19. _Nature Medicine_, 26(5), 672‑675. 
+# https://doi.org/10.1038/s41591-020-0869-5
+
+# Peak, C. M., Childs, L. M., Grad, Y. H. et Buckee, C. O. (2017). Comparing nonpharmaceutical interventions for containing emerging epidemics. _Proceedings of the National 
+#Academy of Sciences_, 114(15), 4023‑4028. https://doi.org/10.1073/pnas.1616438114
+
+# Polack, F. P., Thomas, S. J., Kitchin, N., Absalon, J., Gurtman, A., Lockhart, S., Perez, J. L., Pérez Marc, G., Moreira, E. D., Zerbini, C., Bailey, R., Swanson, K. A., 
+# Roychoudhury, S., Koury, K., Li, P., Kalina, W. V., Cooper, D., Frenck, R. W., Hammitt, L. L., … Gruber, W. C. (2020). Safety and Efficacy of the BNT162b2 mRNA Covid-19 
+# Vaccine. _New England Journal of Medicine_, 383(27), 2603‑2615. https://doi.org/10.1056/NEJMoa2034577
+
+# Scohy, A., Anantharajah, A., Bodéus, M., Kabamba-Mukadi, B., Verroken, A. et Rodriguez-Villalobos, H. (2020). Low performance of rapid antigen detection test as frontline
+# testing for COVID-19 diagnosis. _Journal of Clinical Virology_, 129, 104455. https://doi.org/10.1016/j.jcv.2020.104455
+
+
+
+
 
 # # Implémentation
 
