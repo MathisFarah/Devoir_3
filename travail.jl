@@ -43,7 +43,7 @@
 # et de vaccins. Il faut aussi garder en tête la variabilité des simulations vu que l’intervention débute seulement qu'après le premier décès et que le vaccin n’est actif 
 # qu’après deux jours, donc une partie de la propagation devrait tout de même se faire de façons aléatoire. 
 
-# On s’attend donc à une diminution de la mortalité grâce à notre stratégie, mais cela avec une certaine variabilité entre les simulations vu le caractère stochastique du modèle.
+# On s’attend donc à une diminution de la mortalité grâce à notre stratégie, mais cela avec une certaine variabilité entre les simulations vu la stochasticité du modèle.
 
 # # Présentation du modèle (Contraintes du modèle)
 
