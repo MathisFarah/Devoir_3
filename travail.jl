@@ -30,6 +30,7 @@ using CairoMakie
 # final. C'est par exemple utile pour déclarer l'ensemble des fonctions du
 # modèle hors du document principal.
 
+
 # Le contenu des fichiers est inclus avec `include("code/nom_fichier.jl")`.
 
 # Attention! Il faut que le code soit inclus au bon endroit (avant que les
