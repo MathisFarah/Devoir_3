@@ -19,13 +19,14 @@
 # ## Mise en contexte
 # ## Mise en contexte
 
-# Alors, les maladies infectieuses peuvent se propager rapidement dans une population, surtout quand celle-ci ne possède pas une immunité déjà présente et est donc naive. Cela 
-# peut même mener à un nombre très élevé de décès, surtout lorsque la maladie a beaucoup d'effets néfastes et est donc grâve et virulente. La vitesse de propagation de celle-ci
-# dépend de divers variables comme le taux d’infection, la durée de la maladie chez un individu et des contacts entre individus. Il y a cependant des façons de contrer des 
-# épidémies, comme la vaccination et le dépistage, qui permettent de réduire le nombre d’individus susceptibles d'être malades et permettent d’identifier les personnes 
-# infectieuses afin d’intervenir de manière plus précise, et ce même sans symptômes appararents chez les individus. En contre partie, ces stratégies sont souvent limitées 
-# par des contraintes, comme un budget, ce qui force parfoit de faire le choix entre tester davantage ou vacciner plus d'individus. C'est donc dans ce contexte que les modèles
-# de simulation deviennent utiles pour comparer différentes stratégies et mieux comprendre leur impact sur la propagation d’une maladie.
+# Alors, les maladies infectieuses peuvent se propager rapidement dans une population, surtout quand celle-ci ne possède pas une immunité déjà présente et est donc naive 
+# (Fraser et al, 2004). Cela peut même mener à un nombre très élevé de décès, surtout lorsque la maladie a beaucoup d'effets néfastes et est donc grâve et virulente 
+# (Jones et al, 2008). La vitesse de propagation de celle-ci dépend de divers variables comme le taux d’infection, la durée de la maladie chez un individu et des contacts 
+# entre individus (Hethcote, 2000). Il y a cependant des façons de contrer des épidémies, comme la vaccination et le dépistage, qui permettent de réduire le nombre d’individus 
+# susceptibles d'être malades et permettent d’identifier les personnes infectieuses afin d’intervenir de manière plus précise, et ce même sans symptômes appararents chez les 
+# individus (He et al, 2020). En contre partie, ces stratégies sont souvent limitées par des contraintes, comme un budget (Chalkidou et al, 2016), ce qui force parfoit de faire
+# le choix entre tester davantage ou vacciner plus d'individus. C'est donc dans ce contexte que les modèles de simulation deviennent utiles pour comparer différentes stratégies 
+# et mieux comprendre leur impact sur la propagation d’une maladie (Hethcote, 2000).
 
 # ## Questions
 
@@ -75,7 +76,7 @@
 # premier décès dans la population. Cela représente le fait qu'il existe un délai entre la détection des premiers cas et le début des mesures d'interventions contre 
 # l'épidémie (Peak et al, 2017).
 
-# # Références
+# # Références de l'introduction
 
 # Chalkidou, K., Glassman, A., Marten, R., Vega, J., Teerawattananon, Y., Tritasavit, N., Gyansa-Lutterodt, M., Seiter, A., Kieny, M. P., Hofman, K. et Culyer, A. J. (2016). 
 # Priority-setting for achieving universal health coverage. _Bulletin of the World Health Organization_, 94(6), 462‑467. https://doi.org/10.2471/BLT.15.155721
@@ -86,6 +87,11 @@
 # He, X., Lau, E. H. Y., Wu, P., Deng, X., Wang, J., Hao, X., Lau, Y. C., Wong, J. Y., Guan, Y., Tan, X., Mo, X., Chen, Y., Liao, B., Chen, W., Hu, F., Zhang, Q., Zhong, M., Wu, 
 # Y., Zhao, L., … Leung, G. M. (2020). Temporal dynamics in viral shedding and transmissibility of COVID-19. _Nature Medicine_, 26(5), 672‑675. 
 # https://doi.org/10.1038/s41591-020-0869-5
+
+# Hethcote, H. W. (2000). The Mathematics of Infectious Diseases. SIAM Review, 42(4), 599‑653. https://doi.org/10.1137/S0036144500371907
+
+# Jones, K. E., Patel, N. G., Levy, M. A., Storeygard, A., Balk, D., Gittleman, J. L. et Daszak, P. (2008). Global trends in emerging infectious diseases. _Nature_, 451(7181), 
+# 990‑993. https://doi.org/10.1038/nature06536
 
 # Peak, C. M., Childs, L. M., Grad, Y. H. et Buckee, C. O. (2017). Comparing nonpharmaceutical interventions for containing emerging epidemics. _Proceedings of the National 
 #Academy of Sciences_, 114(15), 4023‑4028. https://doi.org/10.1073/pnas.1616438114
