@@ -10,10 +10,10 @@
 #      prenom: Maxim
 #      matricule: 20269875
 #      github: Max80780
-#    - nom: Auteur
-#      prenom: Deuxième
-#      matricule: XXXXXXXX
-#      github: DeuxiAut
+#    - nom: Menia
+#      prenom: Myriam
+#      matricule: 20281484
+#      github: Myriam7865
 # ---
 
 # # Introduction
