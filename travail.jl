@@ -124,7 +124,7 @@ isinfectious(agent::Agent) = agent.infectious
 
 # Et on peut donc vérifier si un agent est sain:
 
-ishealthy(agent::Agent) = !isinfectious(agent)
+ishealthy(agent::Agent) = !isinfectious(agent) && !isvaccinated(agent)
 
 # Vérifie si un agent est vaccinated
 
@@ -350,7 +350,7 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:black)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-stairs!(ax, 1:tick, I, label="Vaccinés", color=:blue)
+stairs!(ax, 1:tick, V, label="Vaccinés", color=:blue)
 axislegend(ax)
 current_figure()
 
@@ -421,11 +421,11 @@ current_figure()
 
 # Visualisation des infections sur l'axe x
 
-scatter(t, first.(pos), color=:black, alpha=0.5)
+#scatter(t, first.(pos), color=:black, alpha=0.5)
 
 # et y
 
-scatter(t, last.(pos), color=:black, alpha=0.5)
+#scatter(t, last.(pos), color=:black, alpha=0.5)
 
 include("code/01_test.jl")
 
@@ -436,7 +436,6 @@ include("code/01_test.jl")
 
 # La figure suivante représente des valeurs aléatoires:
 
-hist(randn(1000), color=:grey80)
 
 # # Discussion
 
