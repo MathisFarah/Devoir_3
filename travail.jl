@@ -55,7 +55,7 @@
 # Donc, la transmission de la maladie dépend d’un taux d’infection fixé à des probabilité de devenir infectieux par contact de 0,4 lors des contacts entre individus sains et 
 # infectieux. Une fois infecté, un individu reste infectieux pendant 21 jours qui finit toujours par le tuer au bout de ces 21 jours. Alors, un taux d'infection relativement 
 # élevé et une durée de l'infection durant longtemps peuvent être typiques de maladies infectieuses fortement transmissibles. Cela peut alors entrainer une propagation rapide
-# de la maladie dans une population qui est dite naive entre gens infectieux et ceux susceptibles de l'être par contact direct (Fraser et al, 2004).
+# de la maladie dans une population qui est naive entre gens infectieux et ceux susceptibles de l'être par contact (Fraser et al, 2004).
 
 # ## Vaccination et tests de dépistage
 
