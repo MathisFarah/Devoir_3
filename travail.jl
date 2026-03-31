@@ -2,10 +2,10 @@
 # title: Dynamique épidémique
 # repository: MathisFarah/Devoir_3
 # auteurs:
-#    - nom: Auteur
-#      prenom: Premier
-#      matricule: XXXXXXXX
-#      github: premierAuteur
+#    - nom: Farah-Lajoie
+#      prenom: Mathis
+#      matricule: 20280102
+#      github: MathisFarah
 #    - nom: Moreau
 #      prenom: Maxim
 #      matricule: 20269875
@@ -39,165 +39,6 @@ using CairoMakie
 # Attention! Il faut que le code soit inclus au bon endroit (avant que les
 # fonctions déclarées soient appellées).
 
-# ## J'ai copié le code du modèle zombie ici, je ne sais pas si c'est au bon endroit mais bon le voici:
-# # Concepts principaux
-
-# ## Types
-
-# Toutes les variables que nous avons manipulé jusqu'à présent ont un type:
-
-typeof(2.0)
-
-#-
-
-typeof(2)
-
-# Les types font partie d'une hiérarchie:
-
-Float32 <: Number
-
-#-
-
-Float64 <: Real
-
-# Comprendre les types des variables est important pour la performance du code.
-# Par exemple, les deux opérations suivantes sont différentes:
-
-2 + 2.0
-
-#-
-
-2.0 + 2.0
-
-# On peut examiner les opérations nécessaires:
-
-using InteractiveUtils
-@code_typed 2 + 2.0
-
-#-
-
-@code_typed 2.0 + 2.0
-
-# Notez que la première version demande une opération de plus, pour transformer
-# `2` en `2.0`.
-
-# On peut vérifier qu'une variable est d'un type particulier:
-
-2 + 0.1im isa Number
-
-#-
-
-2 + 0.1im isa Real
-
-#-
-
-2 + 0.1im isa Complex
-
-# ## Le dispatch
-
-# Les fonctions peuvent être définies pour ne s'appliquer que sur certains types
-# d'arguments. Par exemple, si on veut écrire une fonction qui mesure la
-# diversité d'espèces à un site, on s'attend a trouver des données de type
-# présence-absence:
-
-prabs = rand(Bool, 10)
-typeof(prabs)
-
-# Le type de `prabs` est un type `Vector` avec un paramètre `Bool`. On peut
-# utiliser cette information pour écrire notre fonction:
-
-function diversité(presence::Vector{Bool})
-    return sum(presence)
-end
-
-# Cette fonction ne va s'appliquer _que_ si on lui donne le type correct:
-
-diversité(prabs)
-
-# Si on essaie de l'appeller avec un type différent (ici `Vector{Int64}`), on
-# obtient un message d'erreur:
-
-diversité(rand(1:10, 50))
-
-# Si on souhaite créer une fonction qui s'applique pour des données de taille de
-# population, nous n'avons pas besoin de lui donner un autre nom! On peut
-# ajouter une méthode à la fonction `diversité`, qui s'appliquera sur un autre
-# type (ici, la mesure de diversité de Pielou):
-
-function diversité(abondances::Vector{<:Real})
-    p = abondances ./ sum(abondances)
-    return -sum(p .* log.(p)) / log(length(p))
-end
-
-#-
-
-diversité(rand(1:10, 50))
-
-# Nous avons spécifié que cette méthode s'applique pour un vecteur qui contient
-# des valeurs dont le type est un nombre réel. Notez que 
-
-Bool <: Real
-
-# Malgré ceci, _Julia_ va toujours utiliser la version la plus spécifique de la
-# méthode. On peut vérifier quelles méthodes existents pour n'importe quelle
-# fonction:
-
-methods(diversité)
-
-# ## Création de types
-
-# Le système de types peut être étendu en créant ses propres types:
-
-mutable struct MonType
-    valeur
-end
-
-#-
-
-MonType(2)
-
-#-
-
-MonType(2.0)
-
-#-
-
-m = MonType(true)
-m.valeur
-
-# On peut en fait aller plus loin, en permettant d'avoir des types qui aient des paramètres:
-
-mutable struct MonAutreType{T1<:Number,T2<:Number}
-    v1::T1
-    v2::T2
-end
-
-# Cela permet de vérifier les arguments du type quand il est créé:
-
-MonAutreType(2, 0.01)
-
-# Le mot-clé `mutable` devant un type nous permet de changer sa valeur plus
-# tard. Si il n'est pas présent, la variable sera immutable. Par exemple, c'est
-# une bonne idée de stocker des paramètres de simulation dans un type immutable.
-
-# On peut aussi donner des valeurs par défaut à un type:
-
-Base.@kwdef mutable struct EncoreUnType{T<:AbstractFloat}
-    x::T = zero(T)
-    y::T = one(T)
-end
-
-# On a maintenant un type avec `x` et `y` qui valent, respectivement, 0 et 1
-# dans le bon type:
-
-EncoreUnType{Float32}()
-
-# En utilisant le mécanisme de _dispatch_ mentionné plus haut, on peut donc
-# écrire du code très expressif.
-
-# *NB*: par convention, les types sont en `CamelCase`. Les conventions
-# d'écriture sont dans le manuel de _Julia_.
-
 # # Simulations
 
 # Nous allons simuler le comportement d'une épidémie, qui se transmet par
@@ -223,14 +64,12 @@ UUIDs.uuid4()
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
-    clock::Int64 = 20
+    infectionclock::Int64 = 20
+    vaccinationclock::Int64 = 1
     infectious::Bool = false
+    vaccinated::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4()
 end
-
-# On peut créer un agent pour vérifier:
-
-Agent()
 
 # La deuxième structure dont nous aurons besoin est un paysage, qui est défini
 # par les coordonnées min/max sur les axes x et y:
@@ -294,6 +133,10 @@ isinfectious(agent::Agent) = agent.infectious
 
 ishealthy(agent::Agent) = !isinfectious(agent)
 
+# Vérifie si un agent un vaccinated
+
+isvaccinated(agent::Agent) = agent.vaccinated
+
 # On peut maintenant définir une fonction pour prendre uniquement les agents qui
 # sont infectieux dans une population. Pour que ce soit clair, nous allons créer
 # un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
@@ -301,6 +144,7 @@ ishealthy(agent::Agent) = !isinfectious(agent)
 const Population = Vector{Agent}
 infectious(pop::Population) = filter(isinfectious, pop)
 healthy(pop::Population) = filter(ishealthy, pop)
+vaccinated(pop::Population) = filter(isvaccinated, pop)
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
@@ -340,6 +184,7 @@ maxlength = 2000
 
 S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
+V = zeros(Int64, maxlength);
 
 # Mais nous allons aussi stocker tous les évènements d'infection qui ont lieu
 # pendant la simulation:
@@ -375,7 +220,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
-            if rand() <= 0.4
+            if rand() <= 0.4 && !neighbor.vaccinated
                 neighbor.infectious = true
                 push!(events, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
             end
@@ -384,15 +229,24 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## Change in survival
     for agent in infectious(population)
-        agent.clock -= 1
+        agent.infectionclock -= 1
+    end
+
+    ## Change in vaccination delay
+    for agent in vaccinated(population)
+        agent.vaccinationclock -= 1
+        if agent.vaccinationclock == 0
+            agent.vaccinated = true
+        end
     end
 
     ## Remove agents that died
-    population = filter(x -> x.clock > 0, population)
+    population = filter(x -> x.infectionclock > 0, population)
 
     ## Store population size
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
+    V[tick] = length(vaccinated(population))
 
 end
 
@@ -517,4 +371,4 @@ hist(randn(1000), color=:grey80)
 
 # Le format de la bibliographie est American Physics Society, et les références
 # seront correctement présentées dans ce format. Vous ne devez/pouvez pas éditer
-# la bibliographie à la main.
+# la bibliographie à la main
