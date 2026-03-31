@@ -95,13 +95,6 @@ L = Landscape(xmin=-50, xmax=50, ymin=-50, ymax=50)
 Random.rand(::Type{Agent}, L::Landscape) = Agent(x=rand(L.xmin:L.xmax), y=rand(L.ymin:L.ymax))
 Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:n]
 
-# Cette fonction nous permet donc de générer un nouvel agent dans un paysage:
-
-rand(Agent, L)
-
-# Mais aussi de générer plusieurs agents:
-
-rand(Agent, L, 3)
 
 # On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
 # Puisque la position de l'agent va changer, notre fonction se termine par `!`:
@@ -133,7 +126,7 @@ isinfectious(agent::Agent) = agent.infectious
 
 ishealthy(agent::Agent) = !isinfectious(agent)
 
-# Vérifie si un agent un vaccinated
+# Vérifie si un agent est vaccinated
 
 isvaccinated(agent::Agent) = agent.vaccinated
 
@@ -165,8 +158,9 @@ end
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
 # Et on génère notre population initiale:
-
-population = Population(L, 3750)
+taillepop = 3750
+premiermort = false
+population = Population(L, taillepop)
 
 # Pour commencer la simulation, il faut identifier un cas index, que nous allons
 # choisir au hasard dans la population:
@@ -178,6 +172,9 @@ rand(population).infectious = true
 
 tick = 0
 maxlength = 2000
+budget = 21_000
+coutRAT = 4
+coutVaccin = 17
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
 # populations à chaque pas de temps:
@@ -207,7 +204,7 @@ events = InfectionEvent[]
 while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## On spécifie que nous utilisons les variables définies plus haut
-    global tick, population
+    global tick, population, budget, coutRAT, coutVaccin
 
     tick += 1
 
@@ -243,6 +240,11 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     ## Remove agents that died
     population = filter(x -> x.infectionclock > 0, population)
 
+    if taillepop > length(population)
+        premiermort = true
+    end
+    
+
     ## Store population size
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
@@ -259,6 +261,7 @@ end
 
 S = S[1:tick];
 I = I[1:tick];
+V = V[1:tick];
 
 #-
 
