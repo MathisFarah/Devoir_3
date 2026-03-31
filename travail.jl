@@ -2,10 +2,10 @@
 # title: Dynamique épidémique
 # repository: MathisFarah/Devoir_3
 # auteurs:
-#    - nom: Auteur
-#      prenom: Premier
-#      matricule: XXXXXXXX
-#      github: premierAuteur
+#    - nom: Farah-Lajoie
+#      prenom: Mathis
+#      matricule: 20280102
+#      github: MathisFarah
 #    - nom: Moreau
 #      prenom: Maxim
 #      matricule: 20269875
@@ -41,165 +41,6 @@ using CairoMakie
 
 # Attention! Il faut que le code soit inclus au bon endroit (avant que les
 # fonctions déclarées soient appellées).
-
-# ## J'ai copié le code du modèle zombie ici, je ne sais pas si c'est au bon endroit mais bon le voici:
-# # Concepts principaux
-
-# ## Types
-
-# Toutes les variables que nous avons manipulé jusqu'à présent ont un type:
-
-typeof(2.0)
-
-#-
-
-typeof(2)
-
-# Les types font partie d'une hiérarchie:
-
-Float32 <: Number
-
-#-
-
-Float64 <: Real
-
-# Comprendre les types des variables est important pour la performance du code.
-# Par exemple, les deux opérations suivantes sont différentes:
-
-2 + 2.0
-
-#-
-
-2.0 + 2.0
-
-# On peut examiner les opérations nécessaires:
-
-using InteractiveUtils
-@code_typed 2 + 2.0
-
-#-
-
-@code_typed 2.0 + 2.0
-
-# Notez que la première version demande une opération de plus, pour transformer
-# `2` en `2.0`.
-
-# On peut vérifier qu'une variable est d'un type particulier:
-
-2 + 0.1im isa Number
-
-#-
-
-2 + 0.1im isa Real
-
-#-
-
-2 + 0.1im isa Complex
-
-# ## Le dispatch
-
-# Les fonctions peuvent être définies pour ne s'appliquer que sur certains types
-# d'arguments. Par exemple, si on veut écrire une fonction qui mesure la
-# diversité d'espèces à un site, on s'attend a trouver des données de type
-# présence-absence:
-
-prabs = rand(Bool, 10)
-typeof(prabs)
-
-# Le type de `prabs` est un type `Vector` avec un paramètre `Bool`. On peut
-# utiliser cette information pour écrire notre fonction:
-
-function diversité(presence::Vector{Bool})
-    return sum(presence)
-end
-
-# Cette fonction ne va s'appliquer _que_ si on lui donne le type correct:
-
-diversité(prabs)
-
-# Si on essaie de l'appeller avec un type différent (ici `Vector{Int64}`), on
-# obtient un message d'erreur:
-
-diversité(rand(1:10, 50))
-
-# Si on souhaite créer une fonction qui s'applique pour des données de taille de
-# population, nous n'avons pas besoin de lui donner un autre nom! On peut
-# ajouter une méthode à la fonction `diversité`, qui s'appliquera sur un autre
-# type (ici, la mesure de diversité de Pielou):
-
-function diversité(abondances::Vector{<:Real})
-    p = abondances ./ sum(abondances)
-    return -sum(p .* log.(p)) / log(length(p))
-end
-
-#-
-
-diversité(rand(1:10, 50))
-
-# Nous avons spécifié que cette méthode s'applique pour un vecteur qui contient
-# des valeurs dont le type est un nombre réel. Notez que 
-
-Bool <: Real
-
-# Malgré ceci, _Julia_ va toujours utiliser la version la plus spécifique de la
-# méthode. On peut vérifier quelles méthodes existents pour n'importe quelle
-# fonction:
-
-methods(diversité)
-
-# ## Création de types
-
-# Le système de types peut être étendu en créant ses propres types:
-
-mutable struct MonType
-    valeur
-end
-
-#-
-
-MonType(2)
-
-#-
-
-MonType(2.0)
-
-#-
-
-m = MonType(true)
-m.valeur
-
-# On peut en fait aller plus loin, en permettant d'avoir des types qui aient des paramètres:
-
-mutable struct MonAutreType{T1<:Number,T2<:Number}
-    v1::T1
-    v2::T2
-end
-
-# Cela permet de vérifier les arguments du type quand il est créé:
-
-MonAutreType(2, 0.01)
-
-# Le mot-clé `mutable` devant un type nous permet de changer sa valeur plus
-# tard. Si il n'est pas présent, la variable sera immutable. Par exemple, c'est
-# une bonne idée de stocker des paramètres de simulation dans un type immutable.
-
-# On peut aussi donner des valeurs par défaut à un type:
-
-Base.@kwdef mutable struct EncoreUnType{T<:AbstractFloat}
-    x::T = zero(T)
-    y::T = one(T)
-end
-
-# On a maintenant un type avec `x` et `y` qui valent, respectivement, 0 et 1
-# dans le bon type:
-
-EncoreUnType{Float32}()
-
-# En utilisant le mécanisme de _dispatch_ mentionné plus haut, on peut donc
-# écrire du code très expressif.
-
-# *NB*: par convention, les types sont en `CamelCase`. Les conventions
-# d'écriture sont dans le manuel de _Julia_.
 
 # # Simulations
 
@@ -239,14 +80,12 @@ jusqu'à atteindre 0 (mort).
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
-    clock::Int64 = 20
+    infectionclock::Int64 = 21
+    vaccinationclock::Int64 = 0
     infectious::Bool = false
+    vaccinated::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4()
 end
-
-# On peut créer un agent pour vérifier:
-
-Agent()
 
 # La deuxième structure dont nous aurons besoin est un paysage, qui est défini
 # par les coordonnées min/max sur les axes x et y:
@@ -293,13 +132,6 @@ Retour :
 Random.rand(::Type{Agent}, L::Landscape) = Agent(x=rand(L.xmin:L.xmax), y=rand(L.ymin:L.ymax))
 Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:n]
 
-# Cette fonction nous permet donc de générer un nouvel agent dans un paysage:
-
-rand(Agent, L)
-
-# Mais aussi de générer plusieurs agents:
-
-rand(Agent, L, 3)
 
 # On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
 # Puisque la position de l'agent va changer, notre fonction se termine par `!`:
@@ -336,8 +168,13 @@ end
 # Vérifie si un individu est infectieux (malade et contagieux)
 isinfectious(agent::Agent) = agent.infectious
 
-# Et on peut donc vérifier si un agent est sain 
-ishealthy(agent::Agent) = !isinfectious(agent)
+# Et on peut donc vérifier si un agent est sain:
+
+ishealthy(agent::Agent) = !isinfectious(agent) && !isvaccinated(agent)
+
+# Vérifie si un agent est vaccinated
+
+isvaccinated(agent::Agent) = agent.vaccinated
 
 # On peut maintenant définir une fonction pour prendre uniquement les agents qui
 # sont infectieux dans une population. Pour que ce soit clair, nous allons créer
@@ -351,6 +188,7 @@ infectious(pop::Population) = filter(isinfectious, pop)
 
 # Retourne les individus infectieux d'une population
 healthy(pop::Population) = filter(ishealthy, pop)
+vaccinated(pop::Population) = filter(isvaccinated, pop)
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
@@ -389,9 +227,9 @@ end
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
 # Et on génère notre population initiale:
-
-# Création de la population initiale de 3750 individus
-population = Population(L, 3750)
+taillepop = 3750
+premiermort = false
+population = Population(L, taillepop)
 
 # Pour commencer la simulation, il faut identifier un cas index, que nous allons
 # choisir au hasard dans la population:
@@ -405,12 +243,17 @@ rand(population).infectious = true
 
 tick = 0
 maxlength = 2000
+budget = 21_000
+coutRAT = 4
+coutVaccin = 17
+efficaiteRAT = 0.95
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
 # populations à chaque pas de temps:
 
 S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
+V = zeros(Int64, maxlength);
 
 # Mais nous allons aussi stocker tous les évènements d'infection qui ont lieu
 # pendant la simulation:
@@ -423,8 +266,81 @@ struct InfectionEvent
     y::Int64
 end
 
-events = InfectionEvent[]
+struct VaccinationEvent
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
 
+struct RATEvent
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
+
+eventsInf = InfectionEvent[]
+eventsVac = VaccinationEvent[]
+eventsRAT = RATEvent[]
+
+# Fonction qui renvoie les voisins non vaccinés d'un agent mort dans un rayon choisi selon distance
+function VoisinsMort(mort::Agent, rayon::Integer)
+    popVoisins = Agent[]
+    for agent in population
+        if abs(agent.x - mort.x) < rayon && abs(agent.y - mort.y) < rayon && !isvaccinated(agent)
+            push!(popVoisins, agent)
+        end
+    end
+    return popVoisins
+end
+
+# Fonction qui test une population et renvoie les agents qui ont testé positif aux test
+function RATPopulation(pop::Population)
+    global budget
+    popPositif = Agent[]
+    for agent in pop
+        # S'assure qu'on a ssez de budget pour faire un RAT sur l'agent
+        if budget > coutRAT
+            # Enleve le cout du test
+            budget -= coutRAT
+            push!(eventsRAT, RATEvent(tick, agent.id, agent.x, agent.y))
+            # Renvoie un vrai positif
+            if efficaiteRAT > rand() && isinfectious(agent)
+                push!(popPositif, agent)
+                # Renvoie un faux positif
+            elseif efficaiteRAT < rand() && ishealthy(agent)
+                push!(popPositif, agent)
+            end
+        else
+            break
+        end
+    end
+    return popPositif
+end
+
+# Fonction qui vaccine la population total selon la population recu en argument
+function VaccinPopulation(popVaccin::Population)
+    global budget
+    for agent in popVaccin
+        # S'assure qu'on a assez d'argent pour vacciner l'agent
+        if budget > coutVaccin
+            # Enleve le cout du test
+            budget -= coutVaccin
+            push!(eventsVac, VaccinationEvent(tick, agent.id, agent.x, agent.y))
+            agent.vaccinationclock = 2
+        else
+            break
+        end
+    end
+end
+
+# Fonction qui fait notes les voisins d'une population d'agent morts, les test et vaccinent ceux qui sont positif
+function VaccinationTime(popMort::Population)
+    for mort in popMort
+        VaccinPopulation(RATPopulation(VoisinsMort(mort, 21)))
+    end
+end
 # Notez qu'on a contraint notre vecteur `events` a ne contenir _que_ des valeurs
 # du bon type, et que nos `InfectionEvent` sont immutables.
 
@@ -462,9 +378,10 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
-            if rand() <= 0.4
+            # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné ET
+            if rand() <= 0.4 && !isvaccinated(neighbor)
                 neighbor.infectious = true
-                push!(events, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
+                push!(eventsInf, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
             end
         end
     end
@@ -472,18 +389,38 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 # Progression de la maladie : Le temps de vie avant la mort diminue pour chaque individu infecté
     ## Change in survival
     for agent in infectious(population)
-        agent.clock -= 1
+        agent.infectionclock -= 1
     end
 
+    ## All the agents that died this tick
+    popMort = filter(x -> x.infectionclock == 0, population)
+    
     # Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
     ## Remove agents that died
-    population = filter(x -> x.clock > 0, population)
+    population = filter(x -> x.infectionclock > 0, population)
+
+    ## Change in vaccination delay, change l'état de l'agent à vaccine et pas infecté s'il l'était
+    for agent in population
+        if agent.vaccinationclock > 0
+            agent.vaccinationclock -= 1
+            if agent.vaccinationclock == 0
+                agent.vaccinated = true
+                agent.infectious = false
+            end
+        end
+    end
+
+    # S'il reste du budget, fait une vaccination des agents lorsqu'il y a un mort
+    if budget > coutRAT && length(popMort) > 0
+        VaccinationTime(popMort)
+    end
 
 
     # Enregistrement des données : Stocke le nombre d'individus sains et infectés à chaque instant
     ## Store population size
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
+    V[tick] = length(vaccinated(population))
 
 end
 
@@ -496,6 +433,7 @@ end
 
 S = S[1:tick];
 I = I[1:tick];
+V = V[1:tick];
 
 #-
 
@@ -503,6 +441,7 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:black)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, V, label="Vaccinés", color=:blue)
 axislegend(ax)
 current_figure()
 
@@ -512,7 +451,7 @@ current_figure()
 # individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
 # combien de fois chaque individu est représenté dans le champ `from`:
 
-infxn_by_uuid = countmap([event.from for event in events]);
+infxn_by_uuid = countmap([event.from for event in eventsInf]);
 
 # La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
 # nombre de fois ou il apparaît:
@@ -539,17 +478,17 @@ f
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
 # position de chaque infection:
 
-t = [event.time for event in events];
-pos = [(event.x, event.y) for event in events];
-
-#
-
-f = Figure()
-ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
-Colorbar(f[1, 2], hm, label="Time of infection")
-hidedecorations!(ax)
-current_figure()
+if length(eventsInf) > 0
+    t = [event.time for event in eventsInf]
+    pos = [(event.x, event.y) for event in eventsInf]
+    
+    f = Figure()
+    ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+    hm = scatter!(ax, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+    Colorbar(f[1, 2], hm, label="Time of infection")
+    hidedecorations!(ax)
+    current_figure()
+end
 
 # # Modifications possibles
 
@@ -573,31 +512,21 @@ current_figure()
 
 # Visualisation des infections sur l'axe x
 
-scatter(t, first.(pos), color=:black, alpha=0.5)
+#scatter(t, first.(pos), color=:black, alpha=0.5)
 
 # et y
 
-scatter(t, last.(pos), color=:black, alpha=0.5)
+#scatter(t, last.(pos), color=:black, alpha=0.5)
 
 include("code/01_test.jl")
 
 # ## Une autre section
 
-"""
-    foo(x, y)
-
-Cette fonction ne fait rien.
-"""
-function foo(x, y)
-    ## Cette ligne est un commentaire
-    return nothing
-end
 
 # # Présentation des résultats
 
 # La figure suivante représente des valeurs aléatoires:
 
-hist(randn(1000), color=:grey80)
 
 # # Discussion
 
@@ -608,4 +537,4 @@ hist(randn(1000), color=:grey80)
 
 # Le format de la bibliographie est American Physics Society, et les références
 # seront correctement présentées dans ce format. Vous ne devez/pouvez pas éditer
-# la bibliographie à la main.
+# la bibliographie à la main
