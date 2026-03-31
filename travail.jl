@@ -392,6 +392,9 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         agent.infectionclock -= 1
     end
 
+    ## All the agents that died this tick
+    popMort = filter(x -> x.infectionclock == 0, population)
+    
     # Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
     ## Remove agents that died
     population = filter(x -> x.infectionclock > 0, population)
