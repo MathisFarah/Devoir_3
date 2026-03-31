@@ -64,8 +64,8 @@ UUIDs.uuid4()
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
-    infectionclock::Int64 = 20
-    vaccinationclock::Int64 = 1
+    infectionclock::Int64 = 21
+    vaccinationclock::Int64 = 0
     infectious::Bool = false
     vaccinated::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4()
@@ -175,6 +175,7 @@ maxlength = 2000
 budget = 21_000
 coutRAT = 4
 coutVaccin = 17
+efficaiteRAT = 0.95
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
 # populations à chaque pas de temps:
@@ -194,8 +195,81 @@ struct InfectionEvent
     y::Int64
 end
 
-events = InfectionEvent[]
+struct VaccinationEvent
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
 
+struct RATEvent
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
+
+eventsInf = InfectionEvent[]
+eventsVac = VaccinationEvent[]
+eventsRAT = RATEvent[]
+
+# Fonction qui renvoie les voisins non vaccinés d'un agent mort dans un rayon choisi selon distance
+function VoisinsMort(mort::Agent, rayon::Integer)
+    popVoisins = Agent[]
+    for agent in population
+        if abs(agent.x - mort.x) < rayon && abs(agent.y - mort.y) < rayon && !isvaccinated(agent)
+            push!(popVoisins, agent)
+        end
+    end
+    return popVoisins
+end
+
+# Fonction qui test une population et renvoie les agents qui ont testé positif aux test
+function RATPopulation(pop::Population)
+    global budget
+    popPositif = Agent[]
+    for agent in pop
+        # S'assure qu'on a ssez de budget pour faire un RAT sur l'agent
+        if budget > coutRAT
+            # Enleve le cout du test
+            budget -= coutRAT
+            push!(eventsRAT, RATEvent(tick, agent.id, agent.x, agent.y))
+            # Renvoie un vrai positif
+            if efficaiteRAT > rand() && isinfectious(agent)
+                push!(popPositif, agent)
+                # Renvoie un faux positif
+            elseif efficaiteRAT < rand() && ishealthy(agent)
+                push!(popPositif, agent)
+            end
+        else
+            break
+        end
+    end
+    return popPositif
+end
+
+# Fonction qui vaccine la population total selon la population recu en argument
+function VaccinPopulation(popVaccin::Population)
+    global budget
+    for agent in popVaccin
+        # S'assure qu'on a assez d'argent pour vacciner l'agent
+        if budget > coutVaccin
+            # Enleve le cout du test
+            budget -= coutVaccin
+            push!(eventsVac, VaccinationEvent(tick, agent.id, agent.x, agent.y))
+            agent.vaccinationclock = 2
+        else
+            break
+        end
+    end
+end
+
+# Fonction qui fait notes les voisins d'une population d'agent morts, les test et vaccinent ceux qui sont positif
+function VaccinationTime(popMort::Population)
+    for mort in popMort
+        VaccinPopulation(RATPopulation(VoisinsMort(mort, 21)))
+    end
+end
 # Notez qu'on a contraint notre vecteur `events` a ne contenir _que_ des valeurs
 # du bon type, et que nos `InfectionEvent` sont immutables.
 
@@ -204,7 +278,7 @@ events = InfectionEvent[]
 while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## On spécifie que nous utilisons les variables définies plus haut
-    global tick, population, budget, coutRAT, coutVaccin
+    global tick, population
 
     tick += 1
 
@@ -217,9 +291,10 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
-            if rand() <= 0.4 && !neighbor.vaccinated
+            # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné ET
+            if rand() <= 0.4 && !isvaccinated(neighbor)
                 neighbor.infectious = true
-                push!(events, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
+                push!(eventsInf, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
             end
         end
     end
@@ -229,21 +304,27 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         agent.infectionclock -= 1
     end
 
-    ## Change in vaccination delay
-    for agent in vaccinated(population)
-        agent.vaccinationclock -= 1
-        if agent.vaccinationclock == 0
-            agent.vaccinated = true
-        end
-    end
+    ## All the agents that died this tick
+    popMort = filter(x -> x.infectionclock == 0, population)
 
     ## Remove agents that died
     population = filter(x -> x.infectionclock > 0, population)
 
-    if taillepop > length(population)
-        premiermort = true
+    ## Change in vaccination delay, change l'état de l'agent à vaccine et pas infecté s'il l'était
+    for agent in population
+        if agent.vaccinationclock > 0
+            agent.vaccinationclock -= 1
+            if agent.vaccinationclock == 0
+                agent.vaccinated = true
+                agent.infectious = false
+            end
+        end
     end
-    
+
+    # S'il reste du budget, fait une vaccination des agents lorsqu'il y a un mort
+    if budget > coutRAT && length(popMort) > 0
+        VaccinationTime(popMort)
+    end
 
     ## Store population size
     S[tick] = length(healthy(population))
@@ -269,6 +350,7 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:black)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, I, label="Vaccinés", color=:blue)
 axislegend(ax)
 current_figure()
 
@@ -278,7 +360,7 @@ current_figure()
 # individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
 # combien de fois chaque individu est représenté dans le champ `from`:
 
-infxn_by_uuid = countmap([event.from for event in events]);
+infxn_by_uuid = countmap([event.from for event in eventsInf]);
 
 # La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
 # nombre de fois ou il apparaît:
@@ -305,8 +387,8 @@ f
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
 # position de chaque infection:
 
-t = [event.time for event in events];
-pos = [(event.x, event.y) for event in events];
+t = [event.time for event in eventsInf];
+pos = [(event.x, event.y) for event in eventsInf];
 
 #
 
@@ -349,15 +431,6 @@ include("code/01_test.jl")
 
 # ## Une autre section
 
-"""
-    foo(x, y)
-
-Cette fonction ne fait rien.
-"""
-function foo(x, y)
-    ## Cette ligne est un commentaire
-    return nothing
-end
 
 # # Présentation des résultats
 
