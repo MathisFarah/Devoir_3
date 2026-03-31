@@ -24,8 +24,11 @@
 
 # ## Packages nécessaires
 
+# Initialisation du générateur aléatoire pour garantir la reproductibilité des simulations
 import Random
 Random.seed!(123456)
+
+# Librairie utilisée pour la visualisation des résultats (graphiques)
 using CairoMakie
 
 # ## Inclure du code
@@ -220,6 +223,19 @@ UUIDs.uuid4()
 # déplacent sur une lattice, et on doit donc suivre leur position. On doit
 # savoir si ils sont infectieux, et dans ce cas, combien de jours il leur reste:
 
+"""
+Représente un individu dans la simulation.
+
+Attributs :
+- x, y : position de l'individu sur la grille
+- clock : nombre de jours restants avant la mort
+- infectious : indique si l'individu est infecté et contagieux
+- id : identifiant unique
+
+Biologiquement, un individu infecté voit son état se dégrader
+jusqu'à atteindre 0 (mort).
+"""
+
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
@@ -234,6 +250,17 @@ Agent()
 
 # La deuxième structure dont nous aurons besoin est un paysage, qui est défini
 # par les coordonnées min/max sur les axes x et y:
+
+"""
+Définit l'environnement spatial de la simulation.
+
+Attributs :
+- xmin, xmax : limites horizontales
+- ymin, ymax : limites verticales
+
+Les individus se déplacent à l'intérieur de cet espace,
+ce qui influence la propagation de la maladie.
+"""
 
 Base.@kwdef mutable struct Landscape
     xmin::Int64 = -25
@@ -253,6 +280,16 @@ L = Landscape(xmin=-50, xmax=50, ymin=-50, ymax=50)
 # soit facile a comprendre, nous allons donc ajouter une méthode à cette
 # fonction:
 
+"""
+Génère un agent à une position aléatoire dans le paysage.
+
+Paramètres :
+- L : environnement spatial
+
+Retour :
+- Un agent avec coordonnées aléatoires
+"""
+
 Random.rand(::Type{Agent}, L::Landscape) = Agent(x=rand(L.xmin:L.xmax), y=rand(L.ymin:L.ymax))
 Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:n]
 
@@ -267,6 +304,15 @@ rand(Agent, L, 3)
 # On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
 # Puisque la position de l'agent va changer, notre fonction se termine par `!`:
 
+"""
+Déplace un individu aléatoirement dans la grille.
+
+L'individu peut se déplacer d'une case dans chaque direction.
+Si "torus" est activé, les bords sont connectés.
+
+Biologiquement cela représente les déplacements des individus,
+qui permettent les contacts et la transmission de la maladie.
+"""
 function move!(A::Agent, L::Landscape; torus=true)
     A.x += rand(-1:1)
     A.y += rand(-1:1)
@@ -285,25 +331,43 @@ function move!(A::Agent, L::Landscape; torus=true)
 end
 
 # Nous pouvons maintenant définir des fonctions qui vont nous permettre de nous
-# simplifier la rédaction du code. Par exemple, on peut vérifier si un agent est
-# infectieux:
+# simplifier la rédaction du code. 
 
+# Vérifie si un individu est infectieux (malade et contagieux)
 isinfectious(agent::Agent) = agent.infectious
 
-# Et on peut donc vérifier si un agent est sain:
-
+# Et on peut donc vérifier si un agent est sain 
 ishealthy(agent::Agent) = !isinfectious(agent)
 
 # On peut maintenant définir une fonction pour prendre uniquement les agents qui
 # sont infectieux dans une population. Pour que ce soit clair, nous allons créer
 # un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
 
+# Type représentant une population d'individus
 const Population = Vector{Agent}
+
+# Retourne les individus infectieux d'une population
 infectious(pop::Population) = filter(isinfectious, pop)
+
+# Retourne les individus infectieux d'une population
 healthy(pop::Population) = filter(ishealthy, pop)
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
+
+"""
+Retourne les individus présents dans la même cellule qu'un agent.
+
+Paramètres :
+- target : agent cible
+- pop : population
+
+Retour :
+- Liste des agents au même endroit
+
+Biologiquement, cela représente les contacts directs
+nécessaires à la transmission.
+"""
 
 incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x, target.y), pop)
 
@@ -312,6 +376,10 @@ incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x,
 # Notez qu'on peut réutiliser notre _alias_ pour écrire une fonction beaucoup plus
 # expressive pour générer une population:
 
+"""
+Crée une population de n individus placés aléatoirement
+dans le paysage.
+"""
 function Population(L::Landscape, n::Integer)
     return rand(Agent, L, n)
 end
@@ -322,10 +390,13 @@ Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population
 
 # Et on génère notre population initiale:
 
+# Création de la population initiale de 3750 individus
 population = Population(L, 3750)
 
 # Pour commencer la simulation, il faut identifier un cas index, que nous allons
 # choisir au hasard dans la population:
+
+# Sélection aléatoire d'un individu initialement infecté (cas index)
 
 rand(population).infectious = true
 
@@ -359,6 +430,19 @@ events = InfectionEvent[]
 
 # ## Simulation
 
+"""
+Boucle principale de la simulation.
+
+À chaque itération :
+- les individus se déplacent
+- les infections ont lieu
+- les individus infectés progressent vers la mort
+- les morts sont retirés
+
+La simulation s'arrête lorsqu'il n'y a plus d'infectés
+ou lorsque la durée maximale est atteinte.
+"""
+
 while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## On spécifie que nous utilisons les variables définies plus haut
@@ -366,11 +450,14 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
     tick += 1
 
+# Déplacement des individus : Chaque individu se déplace aléatoirement dans l'espace
     ## Movement
     for agent in population
         move!(agent, L; torus=false)
     end
-
+    
+#  Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
+# présents dans la même cellule avec une probabilité de 0.4    
     ## Infection
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
@@ -382,14 +469,18 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         end
     end
 
+# Progression de la maladie : Le temps de vie avant la mort diminue pour chaque individu infecté
     ## Change in survival
     for agent in infectious(population)
         agent.clock -= 1
     end
 
+    # Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
     ## Remove agents that died
     population = filter(x -> x.clock > 0, population)
 
+
+    # Enregistrement des données : Stocke le nombre d'individus sains et infectés à chaque instant
     ## Store population size
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
