@@ -122,6 +122,7 @@ UUIDs.uuid4()
 
 # ## Inclure du code
 
+# Type représentant une population d'individus
 include("code/Agent_Landscape.jl")
 include("code/Figure.jl")
 include("code/RAT_Vaccin.jl")
@@ -131,12 +132,6 @@ include("code/Event.jl")
 
 # Nous allons simuler le comportement d'une épidémie, qui se transmet par
 # contact direct, et qui entraîne la mort après un intervale de temps fixe.
-
-
-
-#
-
-
 
 # Nous allons maintenant créer un paysage de départ:
 
@@ -183,9 +178,6 @@ isnottested(agent::Agent) = !agent.tested
 # On peut maintenant définir une fonction pour prendre uniquement les agents qui
 # sont infectieux dans une population. Pour que ce soit clair, nous allons créer
 # un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
-
-# Type représentant une population d'individus
-const Population = Vector{Agent}
 
 # Retourne les individus d'un certains états d'une population
 infectious(pop::Population) = filter(isinfectious, pop)

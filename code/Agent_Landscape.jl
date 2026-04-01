@@ -80,6 +80,8 @@ end
 Crée une population de n individus placés aléatoirement
 dans le paysage.
 """
+const Population = Vector{Agent}
+
 function Population(L::Landscape, n::Integer)
     return rand(Agent, L, n)
 end
