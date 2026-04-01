@@ -276,7 +276,7 @@ ou lorsque la durée maximale est atteinte.
 while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## On spécifie que nous utilisons les variables définies plus haut
-    global tick, population
+    global tick, population, budget, depenseRAT, depenseVaccin, eventsInf, eventsVac, eventsRAT
 
     tick += 1
 
