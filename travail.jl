@@ -103,10 +103,6 @@
 # Scohy, A., Anantharajah, A., Bodéus, M., Kabamba-Mukadi, B., Verroken, A. et Rodriguez-Villalobos, H. (2020). Low performance of rapid antigen detection test as frontline
 # testing for COVID-19 diagnosis. _Journal of Clinical Virology_, 129, 104455. https://doi.org/10.1016/j.jcv.2020.104455
 
-
-
-
-
 # # Implémentation
 
 # ## Packages nécessaires
@@ -117,84 +113,30 @@ Random.seed!(123456)
 
 # Librairie utilisée pour la visualisation des résultats (graphiques)
 using CairoMakie
+CairoMakie.activate!(px_per_unit=6.0)
+using StatsBase
+
+# Puisque nous allons identifier des agents, nous utiliserons des UUIDs pour leur donner un indentifiant unique:
+import UUIDs
+UUIDs.uuid4()
 
 # ## Inclure du code
 
-# Tous les fichiers dans le dossier `code` peuvent être ajoutés au travail
-# final. C'est par exemple utile pour déclarer l'ensemble des fonctions du
-# modèle hors du document principal.
-
-
-# Le contenu des fichiers est inclus avec `include("code/nom_fichier.jl")`.
-
-# Attention! Il faut que le code soit inclus au bon endroit (avant que les
-# fonctions déclarées soient appellées).
+include("code/Agent_Landscape.jl")
+include("code/Figure.jl")
+include("code/RAT_Vaccin.jl")
+include("code/Event.jl")
 
 # # Simulations
 
 # Nous allons simuler le comportement d'une épidémie, qui se transmet par
 # contact direct, et qui entraîne la mort après un intervale de temps fixe.
 
-using CairoMakie
-CairoMakie.activate!(px_per_unit=6.0)
-using StatsBase
-import Random
 
-# Puisque nous allons identifier des agents, nous utiliserons des UUIDs pour
-# leur donner un indentifiant unique:
 
-import UUIDs
-UUIDs.uuid4()
+#
 
-# ## Création des types
 
-# Le premier type que nous avons besoin de créer est un agent. Les agents se
-# déplacent sur une lattice, et on doit donc suivre leur position. On doit
-# savoir si ils sont infectieux, et dans ce cas, combien de jours il leur reste:
-
-"""
-Représente un individu dans la simulation.
-
-Attributs :
-- x, y : position de l'individu sur la grille
-- clock : nombre de jours restants avant la mort
-- infectious : indique si l'individu est infecté et contagieux
-- id : identifiant unique
-
-Biologiquement, un individu infecté voit son état se dégrader
-jusqu'à atteindre 0 (mort).
-"""
-
-Base.@kwdef mutable struct Agent
-    x::Int64 = 0
-    y::Int64 = 0
-    infectionclock::Int64 = 21
-    vaccinationclock::Int64 = 0
-    infectious::Bool = false
-    vaccinated::Bool = false
-    id::UUIDs.UUID = UUIDs.uuid4()
-end
-
-# La deuxième structure dont nous aurons besoin est un paysage, qui est défini
-# par les coordonnées min/max sur les axes x et y:
-
-"""
-Définit l'environnement spatial de la simulation.
-
-Attributs :
-- xmin, xmax : limites horizontales
-- ymin, ymax : limites verticales
-
-Les individus se déplacent à l'intérieur de cet espace,
-ce qui influence la propagation de la maladie.
-"""
-
-Base.@kwdef mutable struct Landscape
-    xmin::Int64 = -25
-    xmax::Int64 = 25
-    ymin::Int64 = -25
-    ymax::Int64 = 25
-end
 
 # Nous allons maintenant créer un paysage de départ:
 
@@ -220,36 +162,6 @@ Retour :
 Random.rand(::Type{Agent}, L::Landscape) = Agent(x=rand(L.xmin:L.xmax), y=rand(L.ymin:L.ymax))
 Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:n]
 
-
-# On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
-# Puisque la position de l'agent va changer, notre fonction se termine par `!`:
-
-"""
-Déplace un individu aléatoirement dans la grille.
-
-L'individu peut se déplacer d'une case dans chaque direction.
-Si "torus" est activé, les bords sont connectés.
-
-Biologiquement cela représente les déplacements des individus,
-qui permettent les contacts et la transmission de la maladie.
-"""
-function move!(A::Agent, L::Landscape; torus=true)
-    A.x += rand(-1:1)
-    A.y += rand(-1:1)
-    if torus
-        A.y = A.y < L.ymin ? L.ymax : A.y
-        A.x = A.x < L.xmin ? L.xmax : A.x
-        A.y = A.y > L.ymax ? L.ymin : A.y
-        A.x = A.x > L.xmax ? L.xmin : A.x
-    else
-        A.y = A.y < L.ymin ? L.ymin : A.y
-        A.x = A.x < L.xmin ? L.xmin : A.x
-        A.y = A.y > L.ymax ? L.ymax : A.y
-        A.x = A.x > L.xmax ? L.xmax : A.x
-    end
-    return A
-end
-
 # Nous pouvons maintenant définir des fonctions qui vont nous permettre de nous
 # simplifier la rédaction du code. 
 
@@ -264,6 +176,10 @@ ishealthy(agent::Agent) = !isinfectious(agent) && !isvaccinated(agent)
 
 isvaccinated(agent::Agent) = agent.vaccinated
 
+# Vérifie si un agent est testé
+
+isnottested(agent::Agent) = !agent.tested
+
 # On peut maintenant définir une fonction pour prendre uniquement les agents qui
 # sont infectieux dans une population. Pour que ce soit clair, nous allons créer
 # un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
@@ -271,12 +187,11 @@ isvaccinated(agent::Agent) = agent.vaccinated
 # Type représentant une population d'individus
 const Population = Vector{Agent}
 
-# Retourne les individus infectieux d'une population
+# Retourne les individus d'un certains états d'une population
 infectious(pop::Population) = filter(isinfectious, pop)
-
-# Retourne les individus infectieux d'une population
 healthy(pop::Population) = filter(ishealthy, pop)
 vaccinated(pop::Population) = filter(isvaccinated, pop)
+nottested(pop::Population) = filter(isnottested, pop)
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
@@ -302,13 +217,6 @@ incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x,
 # Notez qu'on peut réutiliser notre _alias_ pour écrire une fonction beaucoup plus
 # expressive pour générer une population:
 
-"""
-Crée une population de n individus placés aléatoirement
-dans le paysage.
-"""
-function Population(L::Landscape, n::Integer)
-    return rand(Agent, L, n)
-end
 
 # On en profite pour simplifier l'affichage de cette population:
 
@@ -327,13 +235,15 @@ population = Population(L, taillepop)
 rand(population).infectious = true
 
 # Nous initialisons la simulation au temps 0, et nous allons la laisser se
-# dérouler au plus 1000 pas de temps:
+# dérouler au plus 2000 pas de temps:
 
 tick = 0
 maxlength = 2000
 budget = 21_000
 coutRAT = 4
 coutVaccin = 17
+depenseRAT = 0
+depenseVaccin = 0
 efficaiteRAT = 0.95
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
@@ -343,94 +253,18 @@ S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
 V = zeros(Int64, maxlength);
 
-# Mais nous allons aussi stocker tous les évènements d'infection qui ont lieu
+# Pour étudier comment l'argent est dépensé
+
+budgetVecteur = zeros(Int64, maxlength);
+depenseRATVecteur = zeros(Int64, maxlength);
+depenseVaccinVecteur = zeros(Int64, maxlength);
+
+# Mais nous allons aussi stocker tous les évènements d'infection, vaccination et RAT qui ont lieu
 # pendant la simulation:
-
-struct InfectionEvent
-    time::Int64
-    from::UUIDs.UUID
-    to::UUIDs.UUID
-    x::Int64
-    y::Int64
-end
-
-struct VaccinationEvent
-    time::Int64
-    who::UUIDs.UUID
-    x::Int64
-    y::Int64
-end
-
-struct RATEvent
-    time::Int64
-    who::UUIDs.UUID
-    x::Int64
-    y::Int64
-end
 
 eventsInf = InfectionEvent[]
 eventsVac = VaccinationEvent[]
 eventsRAT = RATEvent[]
-
-# Fonction qui renvoie les voisins non vaccinés d'un agent mort dans un rayon choisi selon distance
-function VoisinsMort(mort::Agent, rayon::Integer)
-    popVoisins = Agent[]
-    for agent in population
-        if abs(agent.x - mort.x) < rayon && abs(agent.y - mort.y) < rayon && !isvaccinated(agent)
-            push!(popVoisins, agent)
-        end
-    end
-    return popVoisins
-end
-
-# Fonction qui test une population et renvoie les agents qui ont testé positif aux test
-function RATPopulation(pop::Population)
-    global budget
-    popPositif = Agent[]
-    for agent in pop
-        # S'assure qu'on a ssez de budget pour faire un RAT sur l'agent
-        if budget > coutRAT
-            # Enleve le cout du test
-            budget -= coutRAT
-            push!(eventsRAT, RATEvent(tick, agent.id, agent.x, agent.y))
-            # Renvoie un vrai positif
-            if efficaiteRAT > rand() && isinfectious(agent)
-                push!(popPositif, agent)
-                # Renvoie un faux positif
-            elseif efficaiteRAT < rand() && ishealthy(agent)
-                push!(popPositif, agent)
-            end
-        else
-            break
-        end
-    end
-    return popPositif
-end
-
-# Fonction qui vaccine la population total selon la population recu en argument
-function VaccinPopulation(popVaccin::Population)
-    global budget
-    for agent in popVaccin
-        # S'assure qu'on a assez d'argent pour vacciner l'agent
-        if budget > coutVaccin
-            # Enleve le cout du test
-            budget -= coutVaccin
-            push!(eventsVac, VaccinationEvent(tick, agent.id, agent.x, agent.y))
-            agent.vaccinationclock = 2
-        else
-            break
-        end
-    end
-end
-
-# Fonction qui fait notes les voisins d'une population d'agent morts, les test et vaccinent ceux qui sont positif
-function VaccinationTime(popMort::Population)
-    for mort in popMort
-        VaccinPopulation(RATPopulation(VoisinsMort(mort, 21)))
-    end
-end
-# Notez qu'on a contraint notre vecteur `events` a ne contenir _que_ des valeurs
-# du bon type, et que nos `InfectionEvent` sont immutables.
 
 # ## Simulation
 
@@ -480,15 +314,16 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         agent.infectionclock -= 1
     end
 
-    ## All the agents that died this tick
+    ## Note tous les agents qui sont morts ce tick
     popMort = filter(x -> x.infectionclock == 0, population)
     
-    # Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
-    ## Remove agents that died
+    ## Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
     population = filter(x -> x.infectionclock > 0, population)
 
-    ## Change in vaccination delay, change l'état de l'agent à vaccine et pas infecté s'il l'était
+    ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faore effet
     for agent in population
+        # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
+        agent.tested = false
         if agent.vaccinationclock > 0
             agent.vaccinationclock -= 1
             if agent.vaccinationclock == 0
@@ -498,9 +333,9 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         end
     end
 
-    # S'il reste du budget, fait une vaccination des agents lorsqu'il y a un mort
+    # S'il reste du budget, fait une vaccination et RAT des agents  lorsqu'il y a un mort
     if budget > coutRAT && length(popMort) > 0
-        VaccinationTime(popMort)
+        VaccinationTime(popMort, 21)
     end
 
 
@@ -510,28 +345,28 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     I[tick] = length(infectious(population))
     V[tick] = length(vaccinated(population))
 
+    budgetVecteur[tick] = budget
+    depenseRATVecteur[tick] = depenseRAT
+    depenseVaccinVecteur[tick] = depenseVaccin
+
+
 end
 
-# ## Analyse des résultats
-
-# ### Série temporelle
-
-# Avant toute chose, nous allons couper les séries temporelles au moment de la
-# dernière génération:
-
+# Coupe la longuers des informations au dernier tick ou de l'infromation à été enregistré
 S = S[1:tick];
 I = I[1:tick];
 V = V[1:tick];
 
-#-
+budgetVecteur = budgetVecteur[1:tick];
+depenseRATVecteur = depenseRATVecteur[1:tick];
+depenseVaccinVecteur = depenseVaccinVecteur[1:tick];
+# ## Analyse des résultats
 
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
-stairs!(ax, 1:tick, S, label="Susceptibles", color=:black)
-stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-stairs!(ax, 1:tick, V, label="Vaccinés", color=:blue)
-axislegend(ax)
-current_figure()
+figureEtatSelonTemps(S, I, V)
+# ### Série temporelle
+
+
+
 
 # ### Nombre de cas par individu infectieux
 
@@ -564,19 +399,14 @@ f
 
 # Nous allons enfin nous intéresser à la propagation spatio-temporelle de
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
-# position de chaque infection:
+# position de chaque infection, vaccination et de RAT:
 
-if length(eventsInf) > 0
-    t = [event.time for event in eventsInf]
-    pos = [(event.x, event.y) for event in eventsInf]
-    
-    f = Figure()
-    ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-    hm = scatter!(ax, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
-    Colorbar(f[1, 2], hm, label="Time of infection")
-    hidedecorations!(ax)
-    current_figure()
-end
+figureEvent(eventsInf, "Infection")
+figureEvent(eventsVac, "Vaccination")
+figureEvent(eventsRAT, "RAT")
+
+# Figure qui permet de voir ce qui se passe avec le budget
+figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
 # # Modifications possibles
 
@@ -606,7 +436,7 @@ end
 
 #scatter(t, last.(pos), color=:black, alpha=0.5)
 
-include("code/01_test.jl")
+
 
 # ## Une autre section
 
