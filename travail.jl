@@ -405,6 +405,7 @@ figureEvent(eventsInf, "Infection")
 figureEvent(eventsVac, "Vaccination")
 figureEvent(eventsRAT, "RAT")
 
+# Figure qui permet de voir ce qui se passe avec le budget
 figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
 # # Modifications possibles
