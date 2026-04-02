@@ -284,12 +284,12 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     end
     
 #  Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
-# présents dans la même cellule avec une probabilité de 0.4    
+#  présents dans la même cellule avec une probabilité de 0.4    
     ## Infection
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
-            # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné ET
+            # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné
             if rand() <= 0.4 && !isvaccinated(neighbor)
                 neighbor.infectious = true
                 push!(eventsInf, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
@@ -309,7 +309,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     ## Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
     population = filter(x -> x.infectionclock > 0, population)
 
-    ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faore effet
+    ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faire effet
     for agent in population
         # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
         agent.tested = false
@@ -322,7 +322,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         end
     end
 
-    # S'il reste du budget, fait une vaccination et RAT des agents  lorsqu'il y a un mort
+    # S'il reste du budget, fait une vaccination et RAT des agents lorsqu'il y a un mort
     if budget > coutRAT && length(popMort) > 0
         VaccinationTime(popMort, 21)
     end
@@ -341,7 +341,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
 end
 
-# Coupe la longuers des informations au dernier tick ou de l'infromation à été enregistré
+# Coupe la longueurs des informations au dernier tick où de l'infromation à été enregistré
 S = S[1:tick];
 I = I[1:tick];
 V = V[1:tick];
@@ -397,24 +397,6 @@ figureEvent(eventsRAT, "RAT")
 # Figure qui permet de voir ce qui se passe avec le budget
 figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
-# # Modifications possibles
-
-# Pendant le cours, formulez des hypothèses sur l'effet de 
-
-# - la taille du paysage
-# - la taille de la population
-# - la dispersion sur une lattice toroïdale
-# - la durée de l'épidémie
-# - la survie de la population
-
-# Étudiez le code en profondeur avant de commencer. Est-ce que certains
-# paramètres sont représentés par des _magic numbers_ qui devraient être rendu
-# explicites?
-
-# Testez ces hypothèses en variant les paramètres du modèle. Est-ce qu'il existe
-# des situations dans lesquelles la population est protégée contre l'épidémie?
-# Des situations dans laquelle la structure spatiale de l'épidémie change?
-
 # # Figures supplémentaires
 
 # Visualisation des infections sur l'axe x
@@ -424,11 +406,6 @@ figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 # et y
 
 #scatter(t, last.(pos), color=:black, alpha=0.5)
-
-
-
-# ## Une autre section
-
 
 # # Présentation des résultats
 
