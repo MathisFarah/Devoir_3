@@ -1,6 +1,6 @@
 # Le premier type que nous avons besoin de créer est un agent. Les agents se
 # déplacent sur une lattice, et on doit donc suivre leur position. On doit
-# savoir si ils sont infectieux, et dans ce cas, combien de jours il leur reste:
+# savoir s'ils sont infectieux, et dans ce cas, combien de jours il leur reste:
 
 """
 Représente un individu dans la simulation.

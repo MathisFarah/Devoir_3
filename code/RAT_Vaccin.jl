@@ -1,4 +1,4 @@
-# Fonction qui renvoie les voisins non vaccinés d'un agent mort dans un rayon choisi selon distance
+# Fonction qui renvoie les voisins non vaccinés d'un agent mort dans un rayon choisi selon la distance
 function VoisinsMort(mort::Agent, rayon::Integer)
     popVoisins = Agent[]
     for agent in population
@@ -15,15 +15,15 @@ function RATPopulation(pop::Population)
     global depenseRAT
     popPositif = Agent[]
     for agent in nottested(pop)
-        # S'assure qu'on a ssez de budget pour faire un RAT sur l'agent
+        # S'assure qu'on a assez de budget pour faire un RAT sur l'agent
         if budget > coutRAT
-            # Enleve le cout du test
+            # Enlève le cout du test
             budget -= coutRAT
             # Ajout le cout aux dépenses
             depenseRAT += coutRAT
-            # Enregistre que cette agent à été testé pour ce tick, pour ne pas le retesté si plusieurs morts
+            # Enregistre que cet agent a été testé pour ce tick, pour ne pas le retesté si plusieurs morts
             agent.tested = true
-            # Enregistre l'évenemtn de vaccination
+            # Enregistre l'événement de vaccination
             push!(eventsRAT, RATEvent(tick, agent.id, agent.x, agent.y))
             # Renvoie un vrai positif
             if efficaiteRAT > rand() && isinfectious(agent)
@@ -39,7 +39,7 @@ function RATPopulation(pop::Population)
     return popPositif
 end
 
-# Fonction qui vaccine la population total selon la population recu en argument
+# Fonction qui vaccine la population totale selon la population reçu en argument
 function VaccinPopulation(popVaccin::Population)
     global budget
     global depenseVaccin
@@ -57,7 +57,7 @@ function VaccinPopulation(popVaccin::Population)
     end
 end
 
-# Fonction qui fait notes les voisins d'une population d'agent morts, les test et vaccinent ceux qui sont positif
+# Fonction qui fait notés les voisins d'une population d'agents morts, les testent et vaccinent ceux qui sont positifs
 function VaccinationTime(popMort::Population, rayon::Int)
     for mort in popMort
         VaccinPopulation(RATPopulation(VoisinsMort(mort, rayon)))

@@ -17,16 +17,15 @@
 # ---
 # # Introduction
 # ## Mise en contexte
-# ## Mise en contexte
 
 # Alors, les maladies infectieuses peuvent se propager rapidement dans une population, surtout quand celle-ci ne possède pas une immunité déjà présente et est donc naive 
-# (Fraser et al, 2004). Cela peut même mener à un nombre très élevé de décès, surtout lorsque la maladie a beaucoup d'effets néfastes et est donc grâve et virulente 
-# (Jones et al, 2008). La vitesse de propagation de celle-ci dépend de divers variables comme le taux d’infection, la durée de la maladie chez un individu et des contacts 
-# entre individus (Hethcote, 2000). Il y a cependant des façons de contrer des épidémies, comme la vaccination et le dépistage, qui permettent de réduire le nombre d’individus 
+# @fraser2004. Cela peut même mener à un nombre très élevé de décès, surtout lorsque la maladie a beaucoup d'effets néfastes et est donc grâve et virulente 
+# @jones2008. La vitesse de propagation de celle-ci dépend de divers variables comme le taux d’infection, la durée de la maladie chez un individu et des contacts 
+# entre individus @hethcote2000. Il y a cependant des façons de contrer des épidémies, comme la vaccination et le dépistage, qui permettent de réduire le nombre d’individus 
 # susceptibles d'être malades et permettent d’identifier les personnes infectieuses afin d’intervenir de manière plus précise, et ce même sans symptômes appararents chez les 
-# individus (He et al, 2020). En contre partie, ces stratégies sont souvent limitées par des contraintes, comme un budget (Chalkidou et al, 2016), ce qui force parfoit de faire
+# individus @he2020. En contre partie, ces stratégies sont souvent limitées par des contraintes, comme un budget @chalkidou2016, ce qui force parfoit de faire
 # le choix entre tester davantage ou vacciner plus d'individus. C'est donc dans ce contexte que les modèles de simulation deviennent utiles pour comparer différentes stratégies 
-# et mieux comprendre leur impact sur la propagation d’une maladie (Hethcote, 2000).
+# et mieux comprendre leur impact sur la propagation d’une maladie @hethcote2000.
 
 # ## Questions
 
@@ -55,16 +54,16 @@
 # Donc, la transmission de la maladie dépend d’un taux d’infection fixé à des probabilité de devenir infectieux par contact de 0,4 lors des contacts entre individus sains et 
 # infectieux. Une fois infecté, un individu reste infectieux pendant 21 jours qui finit toujours par le tuer au bout de ces 21 jours. Alors, un taux d'infection relativement 
 # élevé et une durée de l'infection durant longtemps peuvent être typiques de maladies infectieuses fortement transmissibles. Cela peut alors entrainer une propagation rapide
-# de la maladie dans une population qui est naive entre gens infectieux et ceux susceptibles de l'être par contact (Fraser et al, 2004).
+# de la maladie dans une population qui est naive entre gens infectieux et ceux susceptibles de l'être par contact @fraser2004.
 
 # ## Vaccination et tests de dépistage
 
 # Pour ce qui est du vaccin, celui-ci est entièrement efficace et donc les individus vaccinés ne peuvent plus être infectés et transmettent la maladie. Cependant, le vaccin 
 # n'est actif que deux jours après son administration, il y a donc un délai dans la protection. Cela représente le temps nécessaire au développement d’une réponse immunitaire 
 # après l’inoculation du vaccin, malgré que l'efficacité absolue de celui-ci est une simplification des vaccins qui ne sont jamais parfaits, mais souvent proche de l'être (ex:95%)
-# (Polack et al, 2020). Les individus infectieux sont asymptomatiques, comme il est possible pour certaines maladies (He et al, 2020), donc il faut utiliser des tests de 
+# @polack2020. Les individus infectieux sont asymptomatiques, comme il est possible pour certaines maladies @he2020, donc il faut utiliser des tests de 
 # dépistage antigéniqes rapides pour les détecter. Ces test ont une efficacité de 95%, mais ils ne permettent pas de connaître depuis combien de temps un individu est infecté. 
-# Cela représente bien le fait que des tests antigéniqes rapides peuvent être imparfaits vu par exemple des faux négatifs (Scohy et al, 2020). On ne peut donc connaître 
+# Cela représente bien le fait que des tests antigéniqes rapides peuvent être imparfaits vu par exemple des faux négatifs @scohy2020. On ne peut donc connaître 
 # la prévalence de la maladie dans la population autrement que par des tests.
 
 # ## Contraintes budgétaire et d'intervention
@@ -72,36 +71,34 @@
 # Finalement, les interventions pour contrer la propagation de l'épidémie sont resstreintes par un budget total de 21 000$, chaque vaccin coûte 17$ et chaque test de dépistage
 # coûte 4$. Une fois le budget épuisé, il n’est plus possible de tester ou de vacciner. Cela est courant en santé publique d'avoir à faire avec un budget limité ce qui limite 
 # les ressources pour les mesures d'interventions pour contrer l'épidémie. Il faut donc optimiser les ressources disponibles pour limiter la propagation de la maladie et limité 
-# la mortalité (Chalkidou et al, 2016). Finalement, les interventions pour contrer l'épidémie comme la vaccination et les tests ne peuvent commencer qu’après l’apparition du 
+# la mortalité @chalkidou2016. Finalement, les interventions pour contrer l'épidémie comme la vaccination et les tests ne peuvent commencer qu’après l’apparition du 
 # premier décès dans la population. Cela représente le fait qu'il existe un délai entre la détection des premiers cas et le début des mesures d'interventions contre 
-# l'épidémie (Peak et al, 2017).
+# l'épidémie @peak2017.
 
-# # Références de l'introduction
+# # Stratégie de dépistage et vaccination
 
-# Chalkidou, K., Glassman, A., Marten, R., Vega, J., Teerawattananon, Y., Tritasavit, N., Gyansa-Lutterodt, M., Seiter, A., Kieny, M. P., Hofman, K. et Culyer, A. J. (2016). 
-# Priority-setting for achieving universal health coverage. _Bulletin of the World Health Organization_, 94(6), 462‑467. https://doi.org/10.2471/BLT.15.155721
+# Alors, l'intervention va commencer dès qu'un premier individu meurt dans la population, ce qui indique alors que la maladie est déjà présente dans la population. 
+# À partir de ce moment, on effectue des tests RAT dans un rayon de 21 cellules autour de cet individu. Cela en raison que le rayon correspond à la durée de la maladie
+# durant laquelle un individu peut infecté un autre individu, donc le rayon représente la zone où la maladie a le plus de chances de s’être propagée.
 
-# Fraser, C., Riley, S., Anderson, R. M. et Ferguson, N. M. (2004). Factors that make an infectious disease outbreak controllable. _Proceedings of the National Academy of 
-# Sciences_, 101(16), 6146‑6151. https://doi.org/10.1073/pnas.0307506101
+# Par la suite, les individus qui sont testés positifs dans ce rayon vont être vaccinés. Même si le vaccin est actif qu'après deux générations, cela permet quand même de limiter
+# rapidement la transmission de la maladie vu qu'on empêche les individus vaccinés de devenir ou de rester infectieux. Ce même processus est répété à chaque fois qu'un nouvel
+# individu décède, on va alors tester encore dans un rayon de 21 à chaque fois puis vacciner les positifs. Cela permet donc de suivre la propagation de la maladie et de concentrer
+# les efforts de tests et vaccinations dans les zones qui sont plus à risques, tout cela en évitant le plus possible de tester inutilement l’ensemble de la population et de 
+# dépasser le budget. 
 
-# He, X., Lau, E. H. Y., Wu, P., Deng, X., Wang, J., Hao, X., Lau, Y. C., Wong, J. Y., Guan, Y., Tan, X., Mo, X., Chen, Y., Liao, B., Chen, W., Hu, F., Zhang, Q., Zhong, M., Wu, 
-# Y., Zhao, L., … Leung, G. M. (2020). Temporal dynamics in viral shedding and transmissibility of COVID-19. _Nature Medicine_, 26(5), 672‑675. 
-# https://doi.org/10.1038/s41591-020-0869-5
+# # Modifications du modèle (justification biologique)
 
-# Hethcote, H. W. (2000). The Mathematics of Infectious Diseases. SIAM Review, 42(4), 599‑653. https://doi.org/10.1137/S0036144500371907
+# Alors, pour mettre en place la stratégie, il a fallu modifié certaines choses du modèle pour intégrer des mécanismes biologiques supplémentaires. Un état vacciné a été ajouté 
+# aux agents, qui permet de représenter les individus protégés contre l'infection après le délai de deux générations. Ce délai correspond au temps qui faut pour développer une 
+# réponse immunitaire, après cela il ne peut plus transmettre et être infecté par la maladie. 
 
-# Jones, K. E., Patel, N. G., Levy, M. A., Storeygard, A., Balk, D., Gittleman, J. L. et Daszak, P. (2008). Global trends in emerging infectious diseases. _Nature_, 451(7181), 
-# 990‑993. https://doi.org/10.1038/nature06536
-
-# Peak, C. M., Childs, L. M., Grad, Y. H. et Buckee, C. O. (2017). Comparing nonpharmaceutical interventions for containing emerging epidemics. _Proceedings of the National 
-#Academy of Sciences_, 114(15), 4023‑4028. https://doi.org/10.1073/pnas.1616438114
-
-# Polack, F. P., Thomas, S. J., Kitchin, N., Absalon, J., Gurtman, A., Lockhart, S., Perez, J. L., Pérez Marc, G., Moreira, E. D., Zerbini, C., Bailey, R., Swanson, K. A., 
-# Roychoudhury, S., Koury, K., Li, P., Kalina, W. V., Cooper, D., Frenck, R. W., Hammitt, L. L., … Gruber, W. C. (2020). Safety and Efficacy of the BNT162b2 mRNA Covid-19 
-# Vaccine. _New England Journal of Medicine_, 383(27), 2603‑2615. https://doi.org/10.1056/NEJMoa2034577
-
-# Scohy, A., Anantharajah, A., Bodéus, M., Kabamba-Mukadi, B., Verroken, A. et Rodriguez-Villalobos, H. (2020). Low performance of rapid antigen detection test as frontline
-# testing for COVID-19 diagnosis. _Journal of Clinical Virology_, 129, 104455. https://doi.org/10.1016/j.jcv.2020.104455
+# Par la suite, un mécanisme est également ajouté afin de détecter les individus infectieux asymptomatiques. Vu qu'ils ne présentent aucun symptômes, le test est le seul moyen
+# de les identifier. L’efficacité du test (95 %) introduit une petite incertitude, ce qui représente la présence de faux négatifs et de faux positifs en conditions réelles.
+# De plus, la propagation de la maladie se fait via des contacts directs entre individus partageant la même position, donc cela justifie l’utilisation d’un dépistage ciblé 
+# dans un rayon donné de 21 autour des individus morts. Les individus testés positifs dans ce rayon de 21 vont être vaccinés, donc leur état va changer, pour qu'ils ne puissent
+# plus infectés ou mourir de la maladie après 2 jours. Le rayon de 21 est le temps de 21 jours avant qu'un individu décède de la maladie, donc le déplacement qu'il peut faire
+# avant qu'il meurt où il peut propager la maladie à d'autres. Cela correspond à un délai plausible pour qu'une maladie infectieuse et sévère cause la mort des gens infectés.
 
 # # Implémentation
 
@@ -287,12 +284,12 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     end
     
 #  Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
-# présents dans la même cellule avec une probabilité de 0.4    
+#  présents dans la même cellule avec une probabilité de 0.4    
     ## Infection
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
-            # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné ET
+            # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné
             if rand() <= 0.4 && !isvaccinated(neighbor)
                 neighbor.infectious = true
                 push!(eventsInf, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
@@ -312,7 +309,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     ## Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
     population = filter(x -> x.infectionclock > 0, population)
 
-    ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faore effet
+    ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faire effet
     for agent in population
         # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
         agent.tested = false
@@ -325,7 +322,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         end
     end
 
-    # S'il reste du budget, fait une vaccination et RAT des agents  lorsqu'il y a un mort
+    # S'il reste du budget, fait une vaccination et RAT des agents lorsqu'il y a un mort
     if budget > coutRAT && length(popMort) > 0
         VaccinationTime(popMort, 21)
     end
@@ -344,7 +341,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
 end
 
-# Coupe la longuers des informations au dernier tick ou de l'infromation à été enregistré
+# Coupe la longueurs des informations au dernier tick où de l'infromation à été enregistré
 S = S[1:tick];
 I = I[1:tick];
 V = V[1:tick];
@@ -400,24 +397,6 @@ figureEvent(eventsRAT, "RAT")
 # Figure qui permet de voir ce qui se passe avec le budget
 figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
-# # Modifications possibles
-
-# Pendant le cours, formulez des hypothèses sur l'effet de 
-
-# - la taille du paysage
-# - la taille de la population
-# - la dispersion sur une lattice toroïdale
-# - la durée de l'épidémie
-# - la survie de la population
-
-# Étudiez le code en profondeur avant de commencer. Est-ce que certains
-# paramètres sont représentés par des _magic numbers_ qui devraient être rendu
-# explicites?
-
-# Testez ces hypothèses en variant les paramètres du modèle. Est-ce qu'il existe
-# des situations dans lesquelles la population est protégée contre l'épidémie?
-# Des situations dans laquelle la structure spatiale de l'épidémie change?
-
 # # Figures supplémentaires
 
 # Visualisation des infections sur l'axe x
@@ -427,11 +406,6 @@ figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 # et y
 
 #scatter(t, last.(pos), color=:black, alpha=0.5)
-
-
-
-# ## Une autre section
-
 
 # # Présentation des résultats
 
