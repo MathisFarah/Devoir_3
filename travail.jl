@@ -75,6 +75,18 @@
 # premier décès dans la population. Cela représente le fait qu'il existe un délai entre la détection des premiers cas et le début des mesures d'interventions contre 
 # l'épidémie @peak2017.
 
+# # Stratégie de dépistage et vaccination
+
+# Alors, l'intervention va commencer dès qu'on a un premier individu qui meurt dans la population, ce qui indique alors que la maladie est déjà présente dans la population. 
+# À partir de ce moment, on effectue des tests RAT dans un rayon de 21 cellules autour de cet individu. Cela en raison que le rayon correspond à la durée de la maladie
+# durant laquelle un individu peut infecté un autre individu, donc le rayon représente la zone où la maladie a le plus de chances de s’être propagée.
+
+# Par la suite, les individus qui sont testés positifs dans ce rayon vont être vaccinés. Même si le vaccin est actif qu'après deux générations, cela permet quand même de limiter
+# rapidement la transmission de la maladie vu qu'on empêche les individus vaccinés de devenir ou de rester infectieux. Ce même processus est répété à chaque fois qu'un nouvel
+# individu décède, on test encore dans un rayon de 21 à chaque fois puis on vaccine les positifs. Cela permet donc de suivre la propagation de la maladie et de concentrer nos 
+# efforts de tests et vaccinations dans les zones qui sont plus à risques, tout cela en évitant le plus possible de tester inutilement l’ensemble de la population et de dépasser
+# le budget. 
+
 # # Implémentation
 
 # ## Packages nécessaires
