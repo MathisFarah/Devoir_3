@@ -77,15 +77,28 @@
 
 # # Stratégie de dépistage et vaccination
 
-# Alors, l'intervention va commencer dès qu'on a un premier individu qui meurt dans la population, ce qui indique alors que la maladie est déjà présente dans la population. 
+# Alors, l'intervention va commencer dès qu'un premier individu meurt dans la population, ce qui indique alors que la maladie est déjà présente dans la population. 
 # À partir de ce moment, on effectue des tests RAT dans un rayon de 21 cellules autour de cet individu. Cela en raison que le rayon correspond à la durée de la maladie
 # durant laquelle un individu peut infecté un autre individu, donc le rayon représente la zone où la maladie a le plus de chances de s’être propagée.
 
 # Par la suite, les individus qui sont testés positifs dans ce rayon vont être vaccinés. Même si le vaccin est actif qu'après deux générations, cela permet quand même de limiter
 # rapidement la transmission de la maladie vu qu'on empêche les individus vaccinés de devenir ou de rester infectieux. Ce même processus est répété à chaque fois qu'un nouvel
-# individu décède, on test encore dans un rayon de 21 à chaque fois puis on vaccine les positifs. Cela permet donc de suivre la propagation de la maladie et de concentrer nos 
-# efforts de tests et vaccinations dans les zones qui sont plus à risques, tout cela en évitant le plus possible de tester inutilement l’ensemble de la population et de dépasser
-# le budget. 
+# individu décède, on va alors tester encore dans un rayon de 21 à chaque fois puis vacciner les positifs. Cela permet donc de suivre la propagation de la maladie et de concentrer
+# les efforts de tests et vaccinations dans les zones qui sont plus à risques, tout cela en évitant le plus possible de tester inutilement l’ensemble de la population et de 
+# dépasser le budget. 
+
+# # Modifications du modèle (justification biologique)
+
+# Alors, pour mettre en place la stratégie, il a fallu modifié certaines choses du modèle pour intégrer des mécanismes biologiques supplémentaires. Un état vacciné a été ajouté 
+# aux agents, qui permet de représenter les individus protégés contre l'infection après le délai de deux générations. Ce délai correspond au temps qui faut pour développer une 
+# réponse immunitaire, après cela il ne peut plus transmettre et être infecté par la maladie. 
+
+# Par la suite, un mécanisme est également ajouté afin de détecter les individus infectieux asymptomatiques. Vu qu'ils ne présentent aucun symptômes, le test est le seul moyen
+# de les identifier. L’efficacité du test (95 %) introduit une petite incertitude, ce qui représente la présence de faux négatifs et de faux positifs en conditions réelles.
+# De plus, la propagation de la maladie se fait via des contacts directs entre individus partageant la même position, donc cela justifie l’utilisation d’un dépistage ciblé 
+# dans un rayon donné de 21 autour des individus morts. Les individus testés positifs dans ce rayon de 21 vont être vaccinés, donc leur état va changer, pour qu'ils ne puissent
+# plus infectés ou mourir de la maladie après 2 jours. Le rayon de 21 est le temps de 21 jours avant qu'un individu décède de la maladie, donc le déplacement qu'il peut faire
+# avant qu'il meurt où il peut propager la maladie à d'autres. Cela correspond à un délai plausible pour qu'une maladie infectieuse et sévère cause la mort des gens infectés.
 
 # # Implémentation
 
