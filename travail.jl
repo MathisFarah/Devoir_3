@@ -141,16 +141,6 @@ L = Landscape(xmin=-50, xmax=50, ymin=-50, ymax=50)
 # soit facile a comprendre, nous allons donc ajouter une méthode à cette
 # fonction:
 
-"""
-Génère un agent à une position aléatoire dans le paysage.
-
-Paramètres :
-- L : environnement spatial
-
-Retour :
-- Un agent avec coordonnées aléatoires
-"""
-
 Random.rand(::Type{Agent}, L::Landscape) = Agent(x=rand(L.xmin:L.xmax), y=rand(L.ymin:L.ymax))
 Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:n]
 
@@ -177,6 +167,7 @@ isnottested(agent::Agent) = !agent.tested
 # un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
 
 # Retourne les individus d'un certains états d'une population
+
 infectious(pop::Population) = filter(isinfectious, pop)
 healthy(pop::Population) = filter(ishealthy, pop)
 vaccinated(pop::Population) = filter(isvaccinated, pop)
@@ -203,29 +194,16 @@ incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x,
 
 # ## Paramètres initiaux
 
-# Notez qu'on peut réutiliser notre _alias_ pour écrire une fonction beaucoup plus
-# expressive pour générer une population:
-
-
 # On en profite pour simplifier l'affichage de cette population:
 
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
-# Et on génère notre population initiale:
+nbSim = 50
+mortFinale = zeros(Int, nbSim)
+coutFinale = zeros(Int, nbSim)
+
 taillepop = 3750
-premiermort = false
-population = Population(L, taillepop)
-
-# Pour commencer la simulation, il faut identifier un cas index, que nous allons
-# choisir au hasard dans la population:
-
-# Sélection aléatoire d'un individu initialement infecté (cas index)
-
-rand(population).infectious = true
-
-# Nous initialisons la simulation au temps 0, et nous allons la laisser se
-# dérouler au plus 2000 pas de temps:
-
+population = Population[]
 tick = 0
 maxlength = 2000
 budget = 21_000
@@ -233,20 +211,20 @@ coutRAT = 4
 coutVaccin = 17
 depenseRAT = 0
 depenseVaccin = 0
-efficaiteRAT = 0.95
+efficaciteRAT = 0.95
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
 # populations à chaque pas de temps:
 
-S = zeros(Int64, maxlength);
-I = zeros(Int64, maxlength);
-V = zeros(Int64, maxlength);
+S = zeros(Int64, maxlength)
+I = zeros(Int64, maxlength)
+V = zeros(Int64, maxlength)
 
 # Pour étudier comment l'argent est dépensé
 
-budgetVecteur = zeros(Int64, maxlength);
-depenseRATVecteur = zeros(Int64, maxlength);
-depenseVaccinVecteur = zeros(Int64, maxlength);
+budgetVecteur = zeros(Int64, maxlength)
+depenseRATVecteur = zeros(Int64, maxlength)
+depenseVaccinVecteur = zeros(Int64, maxlength)
 
 # Mais nous allons aussi stocker tous les évènements d'infection, vaccination et RAT qui ont lieu
 # pendant la simulation:
@@ -255,161 +233,176 @@ eventsInf = InfectionEvent[]
 eventsVac = VaccinationEvent[]
 eventsRAT = RATEvent[]
 
-# ## Simulation
+# Boucle afin de faire la simluation plusieurs fois
 
-"""
-Boucle principale de la simulation.
+for i in 1:nbSim
 
-À chaque itération :
-- les individus se déplacent
-- les infections ont lieu
-- les individus infectés progressent vers la mort
-- les morts sont retirés
+    # Réinitialse les valeurs de chacun de ces paramètres avant chaque simulation
 
-La simulation s'arrête lorsqu'il n'y a plus d'infectés
-ou lorsque la durée maximale est atteinte.
-"""
+    global tick = 0
+    global budget = 21_000
+    global depenseRAT = 0
+    global depenseVaccin = 0
+    global eventsInf = InfectionEvent[]
+    global eventsVac = VaccinationEvent[]
+    global eventsRAT = RATEvent[]
+    global S = zeros(Int64, maxlength)
+    global I = zeros(Int64, maxlength)
+    global V = zeros(Int64, maxlength)
+    global budgetVecteur = zeros(Int64, maxlength)
+    global depenseRATVecteur = zeros(Int64, maxlength)
+    global depenseVaccinVecteur = zeros(Int64, maxlength)
 
-while (length(infectious(population)) != 0) & (tick < maxlength)
+    # Et on génère notre population aléatoire initiale:
 
-    ## On spécifie que nous utilisons les variables définies plus haut
-    global tick, population, budget, depenseRAT, depenseVaccin, eventsInf, eventsVac, eventsRAT
+    global population = Population(L, taillepop)
 
-    tick += 1
+    # Pour commencer la simulation, il faut identifier un cas index, que nous allons
+    # choisir au hasard dans la population:
 
-# Déplacement des individus : Chaque individu se déplace aléatoirement dans l'espace
-    ## Movement
-    for agent in population
-        move!(agent, L; torus=false)
-    end
+    # Sélection aléatoire d'un individu initialement infecté (cas index)
+
+    rand(population).infectious = true
+
+    # ## Simulation
+
+    """
+    Boucle principale de la simulation.
     
-#  Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
-#  présents dans la même cellule avec une probabilité de 0.4    
-    ## Infection
-    for agent in Random.shuffle(infectious(population))
-        neighbors = healthy(incell(agent, population))
-        for neighbor in neighbors
-            # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné
-            if rand() <= 0.4 && !isvaccinated(neighbor)
-                neighbor.infectious = true
-                push!(eventsInf, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
+    À chaque itération :
+    - les individus se déplacent
+    - les infections ont lieu
+    - les individus infectés progressent vers la mort
+    - les morts sont retirés
+    
+    La simulation s'arrête lorsqu'il n'y a plus d'infectés
+    ou lorsque la durée maximale est atteinte.
+    """
+
+    while (length(infectious(population)) != 0) & (tick < maxlength)
+
+        ## On spécifie que nous utilisons les variables définies plus haut
+
+        global tick, population, budget, depenseRAT, depenseVaccin, eventsInf, eventsVac, eventsRAT
+
+        tick += 1
+
+        # Déplacement des individus : Chaque individu se déplace aléatoirement dans l'espace
+        ## Movement
+
+        for agent in population
+            move!(agent, L; torus=false)
+        end
+
+        #  Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
+        #  présents dans la même cellule avec une probabilité de 0.4    
+        ## Infection
+
+        for agent in Random.shuffle(infectious(population))
+            neighbors = healthy(incell(agent, population))
+            for neighbor in neighbors
+
+                # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné
+
+                if rand() <= 0.4 && !isvaccinated(neighbor)
+                    neighbor.infectious = true
+                    push!(eventsInf, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
+                end
             end
         end
-    end
 
-# Progression de la maladie : Le temps de vie avant la mort diminue pour chaque individu infecté
-    ## Change in survival
-    for agent in infectious(population)
-        agent.infectionclock -= 1
-    end
+        # Progression de la maladie : Le temps de vie avant la mort diminue pour chaque individu infecté
+        ## Change in survival
 
-    ## Note tous les agents qui sont morts ce tick
-    popMort = filter(x -> x.infectionclock == 0, population)
-    
-    ## Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
-    population = filter(x -> x.infectionclock > 0, population)
+        for agent in infectious(population)
+            agent.infectionclock -= 1
+        end
 
-    ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faire effet
-    for agent in population
-        # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
-        agent.tested = false
-        if agent.vaccinationclock > 0
-            agent.vaccinationclock -= 1
-            if agent.vaccinationclock == 0
-                agent.vaccinated = true
-                agent.infectious = false
+        ## Note tous les agents qui sont morts ce tick
+
+        popMort = filter(x -> x.infectionclock == 0, population)
+
+        ## Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
+
+        population = filter(x -> x.infectionclock > 0, population)
+
+        ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faire effet
+
+        for agent in population
+
+            # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
+
+            agent.tested = false
+
+            # Si le temps de latence du vaccin est suéprieur à 0, on le décrémente
+
+            if agent.vaccinationclock > 0
+                agent.vaccinationclock -= 1
+
+                # Si le temps de latence du vaccin atteint 0, la personne devient vacciné et erpd son état d'infecté si elle l'était
+
+                if agent.vaccinationclock == 0
+                    agent.vaccinated = true
+                    agent.infectious = false
+                end
             end
         end
+
+        # S'il reste du budget, fait une vaccination et RAT des agents lorsqu'il y a un mort
+
+        if budget > coutRAT && length(popMort) > 0
+            Vaccination(popMort, 10)
+        end
+
+
+        # Enregistrement des données : Stocke le nombre d'individus sains et infectés à chaque instant
+
+        S[tick] = length(healthy(population))
+        I[tick] = length(infectious(population))
+        V[tick] = length(vaccinated(population))
+
+        # Enregistrement des données : Stocke les dépenses de chaque instant
+
+        budgetVecteur[tick] = budget
+        depenseRATVecteur[tick] = depenseRAT
+        depenseVaccinVecteur[tick] = depenseVaccin
+
+
     end
 
-    # S'il reste du budget, fait une vaccination et RAT des agents lorsqu'il y a un mort
-    if budget > coutRAT && length(popMort) > 0
-        VaccinationTime(popMort, 21)
-    end
+    # Coupe la longueurs des informations au dernier tick où de l'infromation à été enregistré
 
+    S = S[1:tick]
+    I = I[1:tick]
+    V = V[1:tick]
+    budgetVecteur = budgetVecteur[1:tick]
+    depenseRATVecteur = depenseRATVecteur[1:tick]
+    depenseVaccinVecteur = depenseVaccinVecteur[1:tick]
 
-    # Enregistrement des données : Stocke le nombre d'individus sains et infectés à chaque instant
-    ## Store population size
-    S[tick] = length(healthy(population))
-    I[tick] = length(infectious(population))
-    V[tick] = length(vaccinated(population))
-
-    budgetVecteur[tick] = budget
-    depenseRATVecteur[tick] = depenseRAT
-    depenseVaccinVecteur[tick] = depenseVaccin
-
+    # Enregistre le nombre de mort ainsi que le cout total à la fin de l simulation
+    mortFinale[i] = taillepop - length(S) - length(I) - length(V)
+    coutFinale[i] = budgetVecteur[1] - budget
 
 end
-
-# Coupe la longueurs des informations au dernier tick où de l'infromation à été enregistré
-S = S[1:tick];
-I = I[1:tick];
-V = V[1:tick];
-
-budgetVecteur = budgetVecteur[1:tick];
-depenseRATVecteur = depenseRATVecteur[1:tick];
-depenseVaccinVecteur = depenseVaccinVecteur[1:tick];
 # ## Analyse des résultats
 
-figureEtatSelonTemps(S, I, V)
-# ### Série temporelle
+# Figure 1 : Représentation graphique des dépenses et du budget d'une seule simluation à travers le temps
 
-
-
-
-# ### Nombre de cas par individu infectieux
-
-# Nous allons ensuite observer la distribution du nombre de cas créés par chaque
-# individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
-# combien de fois chaque individu est représenté dans le champ `from`:
-
-infxn_by_uuid = countmap([event.from for event in eventsInf]);
-
-# La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
-# nombre de fois ou il apparaît:
-
-# Notez que ceci nous indique combien d'individus ont été infectieux au total:
-
-length(infxn_by_uuid)
-
-# Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
-# utiliser `countmap` une deuxième fois:
-
-nb_inxfn = countmap(values(infxn_by_uuid))
-
-# On peut maintenant visualiser ces données:
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
-scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
-f
-
-# ### Hotspots
-
-# Nous allons enfin nous intéresser à la propagation spatio-temporelle de
-# l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
-# position de chaque infection, vaccination et de RAT:
-
-figureEvent(eventsInf, "Infection")
-figureEvent(eventsVac, "Vaccination")
-figureEvent(eventsRAT, "RAT")
-
-# Figure qui permet de voir ce qui se passe avec le budget
 figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
-# # Figures supplémentaires
+# Figure 2 : Représentation graphique des différents états des agents à travers le temps
 
-# Visualisation des infections sur l'axe x
+figureEtatSelonTemps(S, I, V)
 
-#scatter(t, first.(pos), color=:black, alpha=0.5)
+# Figure 3 : Histogramme du nombres d'agent mort à la fin de 250 simulations
 
-# et y
+histogramme(mortFinale, "Mort")
 
-#scatter(t, last.(pos), color=:black, alpha=0.5)
+# Figure 4 : Histogramme du cout total à la fin de 250 simulations
+
+histogramme(coutFinale, "Dépenses")
 
 # # Présentation des résultats
-
-# La figure suivante représente des valeurs aléatoires:
 
 
 # # Discussion

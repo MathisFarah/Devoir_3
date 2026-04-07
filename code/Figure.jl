@@ -12,6 +12,7 @@ end
 
 # Figure permettant de voir quand et où ont eu certains évenements
 function figureEvent(events, typeevent::String)
+    # Si events ne cpontient aucune valeur, affiche un message d'erreur
     if length(events) > 0
         t = [event.time for event in events]
         pos = [(event.x, event.y) for event in events]
@@ -24,7 +25,7 @@ function figureEvent(events, typeevent::String)
         current_figure()
     else
         @warn "Il n'y a aucune information enregistré dans l'event"
-    end      
+    end
 end
 
 # Figure permettant d'observer le budget et les dépenses
@@ -35,5 +36,12 @@ function figureBudget(budget, RAT, vaccin)
     stairs!(ax, 1:tick, RAT, label="Dépense RAT", color=:red)
     stairs!(ax, 1:tick, vaccin, label="Dépense Vaccin", color=:blue)
     axislegend(ax)
+    current_figure()
+end
+
+# Histogramme qui renvoie la fréquence des valeurs contenue dans un vecteur
+function histogramme(vecteur, titre::String)
+    h = Figure()
+    hist(h[1, 1], vecteur, color=:grey40, axis=(title="$titre", xlabel="Nombre d'Agent", ylabel="Fréquence"))
     current_figure()
 end
