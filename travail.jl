@@ -386,58 +386,21 @@ for i in 1:nbSim
 end
 # ## Analyse des résultats
 
-figureEtatSelonTemps(S, I, V)
+# Figure 1 : Représentation graphique des dépenses et du budget d'une seule simluation à travers le temps
 
-
-# ### Série temporelle
-
-
-
-
-# ### Nombre de cas par individu infectieux
-
-# Nous allons ensuite observer la distribution du nombre de cas créés par chaque
-# individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
-# combien de fois chaque individu est représenté dans le champ `from`:
-
-infxn_by_uuid = countmap([event.from for event in eventsInf]);
-
-# La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
-# nombre de fois ou il apparaît:
-
-# Notez que ceci nous indique combien d'individus ont été infectieux au total:
-
-length(infxn_by_uuid)
-
-# Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
-# utiliser `countmap` une deuxième fois:
-
-nb_inxfn = countmap(values(infxn_by_uuid))
-
-# On peut maintenant visualiser ces données:
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
-scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
-f
-
-# ### Hotspots
-
-# Nous allons enfin nous intéresser à la propagation spatio-temporelle de
-# l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
-# position de chaque infection, vaccination et de RAT:
-
-figureEvent(eventsInf, "Infection")
-figureEvent(eventsVac, "Vaccination")
-figureEvent(eventsRAT, "RAT")
-
-# Figure qui permet de voir ce qui se passe avec le budget
 figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
+# Figure 2 : Représentation graphique des différents états des agents à travers le temps
+
 figureEtatSelonTemps(S, I, V)
 
+# Figure 3 : Histogramme du nombres d'agent mort à la fin de 250 simulations
+
 histogramme(mortFinale, "Mort")
-# # Figures supplémentaires
+
+# Figure 4 : Histogramme du cout total à la fin de 250 simulations
+
+histogramme(coutFinale, "Dépenses")
 
 # # Présentation des résultats
 
