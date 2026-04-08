@@ -3,7 +3,7 @@
 function VoisinsMort(mort::Agent, rayon::Integer)
     popVoisins = Agent[]
 
-    # Boucle qui passe au travers de tous les agenst de la population
+    # Boucle qui passe au travers de tous les agents de la population
 
     for agent in population
 
@@ -23,11 +23,11 @@ function RATPopulation(pop::Population)
     global depenseRAT
     popPositif = Agent[]
 
-    # Boucle qui passe au travers de la population recu en argument, mais seulement ceux qui n'ont pas été test
+    # Boucle qui passe au travers de la population reçu en argument, mais seulement ceux qui n'ont pas été testés
 
     for agent in nottested(pop)
 
-        # S'assure qu'on a assez de budget pour faire un RAT sur l'agent, sinon arrete les tests
+        # S'assure qu'on a assez de budget pour faire un RAT sur l'agent, sinon on arrete les tests
 
         if budget > coutRAT
 
@@ -71,19 +71,19 @@ function VaccinPopulation(popVaccin::Population)
     global depenseVaccin
     for agent in popVaccin
 
-        # S'assure qu'on a assez d'argent pour vacciner l'agent, sinon arrete les vaccinations
+        # S'assure qu'on a assez d'argent pour vacciner l'agent, sinon arrête les vaccinations
 
         if budget > coutVaccin
 
-            # Enleve le cout du test
+            # Enlève le cout du test
 
             budget -= coutVaccin
 
-            # Ajout le cout aux dépenses
+            # Ajoute le coût aux dépenses
 
             depenseVaccin += coutVaccin
 
-            # Enregistre l'énement de vaccination
+            # Enregistre l'événement de vaccination
 
             push!(eventsVac, VaccinationEvent(tick, agent.id, agent.x, agent.y))
 

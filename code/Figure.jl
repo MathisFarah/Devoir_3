@@ -1,7 +1,7 @@
 # Figure permettant d'observer le nombre de différents états des agents
 function figureEtatSelonTemps(S, I, V)
     f = Figure()
-    ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
+    ax = Axis(f[1, 1]; xlabel="Générations", ylabel="Population")
     stairs!(ax, 1:tick, S, label="Susceptibles", color=:black)
     stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
     stairs!(ax, 1:tick, V, label="Vaccinés", color=:blue)
@@ -10,9 +10,9 @@ function figureEtatSelonTemps(S, I, V)
 end
 
 
-# Figure permettant de voir quand et où ont eu certains évenements
+# Figure permettant de voir quand et où ont eu lieux certains évenements
 function figureEvent(events, typeevent::String)
-    # Si events ne cpontient aucune valeur, affiche un message d'erreur
+    # Si events ne contient aucune valeur, affiche un message d'erreur
     if length(events) > 0
         t = [event.time for event in events]
         pos = [(event.x, event.y) for event in events]
@@ -24,17 +24,17 @@ function figureEvent(events, typeevent::String)
         hidedecorations!(ax)
         current_figure()
     else
-        @warn "Il n'y a aucune information enregistré dans l'event"
+        @warn "Il n'y a aucune information enregistrée dans l'event"
     end
 end
 
 # Figure permettant d'observer le budget et les dépenses
 function figureBudget(budget, RAT, vaccin)
     f = Figure()
-    ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Dollards")
-    stairs!(ax, 1:tick, budget, label="Argent restant", color=:green)
-    stairs!(ax, 1:tick, RAT, label="Dépense RAT", color=:red)
-    stairs!(ax, 1:tick, vaccin, label="Dépense Vaccin", color=:blue)
+    ax = Axis(f[1, 1]; xlabel="Générations", ylabel="Dollards")
+    stairs!(ax, 1:tick, budget, label="Argents restants", color=:green)
+    stairs!(ax, 1:tick, RAT, label="Dépenses RAT", color=:red)
+    stairs!(ax, 1:tick, vaccin, label="Dépenses Vaccins", color=:blue)
     axislegend(ax)
     current_figure()
 end
@@ -42,6 +42,6 @@ end
 # Histogramme qui renvoie la fréquence des valeurs contenue dans un vecteur
 function histogramme(vecteur, titre::String)
     h = Figure()
-    hist(h[1, 1], vecteur, color=:grey40, axis=(title="$titre", xlabel="Nombre d'Agent", ylabel="Fréquence"))
+    hist(h[1, 1], vecteur, color=:grey40, axis=(title="$titre", xlabel="Nombre d'Argents", ylabel="Fréquences"))
     current_figure()
 end

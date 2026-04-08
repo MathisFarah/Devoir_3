@@ -226,7 +226,7 @@ budgetVecteur = zeros(Int64, maxlength)
 depenseRATVecteur = zeros(Int64, maxlength)
 depenseVaccinVecteur = zeros(Int64, maxlength)
 
-# Mais nous allons aussi stocker tous les évènements d'infection, vaccination et RAT qui ont lieu
+# Mais nous allons aussi stocker tous les évènements d'infections, vaccinations et RAT qui ont lieu
 # pendant la simulation:
 
 eventsInf = InfectionEvent[]
@@ -275,7 +275,7 @@ for i in 1:nbSim
     - les individus infectés progressent vers la mort
     - les morts sont retirés
     
-    La simulation s'arrête lorsqu'il n'y a plus d'infectés
+    La simulation s'arrête lorsqu'il n'y a plus d'infecté
     ou lorsque la durée maximale est atteinte.
     """
 
@@ -326,7 +326,7 @@ for i in 1:nbSim
 
         population = filter(x -> x.infectionclock > 0, population)
 
-        ## Change l'état de l'agent à vacciné et non-infecté lorsque la vaccin commence à faire effet
+        ## Change l'état de l'agent à vacciner et non-infecté lorsque la vaccin commence à faire effet
 
         for agent in population
 
@@ -334,12 +334,12 @@ for i in 1:nbSim
 
             agent.tested = false
 
-            # Si le temps de latence du vaccin est suéprieur à 0, on le décrémente
+            # Si le temps de latence du vaccin est supérieur à 0, on le décrémente
 
             if agent.vaccinationclock > 0
                 agent.vaccinationclock -= 1
 
-                # Si le temps de latence du vaccin atteint 0, la personne devient vacciné et erpd son état d'infecté si elle l'était
+                # Si le temps de latence du vaccin atteint 0, la personne devient vacciné et perd son état d'infecté si elle l'était
 
                 if agent.vaccinationclock == 0
                     agent.vaccinated = true
@@ -355,13 +355,13 @@ for i in 1:nbSim
         end
 
 
-        # Enregistrement des données : Stocke le nombre d'individus sains et infectés à chaque instant
+        # Enregistrement des données : Stock le nombre d'individus sains et infectés à chaque instant
 
         S[tick] = length(healthy(population))
         I[tick] = length(infectious(population))
         V[tick] = length(vaccinated(population))
 
-        # Enregistrement des données : Stocke les dépenses de chaque instant
+        # Enregistrement des données : Stock les dépenses de chaque instant
 
         budgetVecteur[tick] = budget
         depenseRATVecteur[tick] = depenseRAT
@@ -370,7 +370,7 @@ for i in 1:nbSim
 
     end
 
-    # Coupe la longueurs des informations au dernier tick où de l'infromation à été enregistré
+    # Coupe la longueur des informations au dernier tick où de l'infromation à été enregistré
 
     S = S[1:tick]
     I = I[1:tick]
@@ -379,7 +379,7 @@ for i in 1:nbSim
     depenseRATVecteur = depenseRATVecteur[1:tick]
     depenseVaccinVecteur = depenseVaccinVecteur[1:tick]
 
-    # Enregistre le nombre de mort ainsi que le cout total à la fin de l simulation
+    # Enregistre le nombre de mort ainsi que le coût total à la fin de la simulation
     mortFinale[i] = taillepop - length(S) - length(I) - length(V)
     coutFinale[i] = budgetVecteur[1] - budget
 
@@ -394,11 +394,11 @@ figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
 figureEtatSelonTemps(S, I, V)
 
-# Figure 3 : Histogramme du nombres d'agent mort à la fin de 250 simulations
+# Figure 3 : Histogramme du nombre d'agents morts à la fin de 250 simulations
 
-histogramme(mortFinale, "Mort")
+histogramme(mortFinale, "Morts")
 
-# Figure 4 : Histogramme du cout total à la fin de 250 simulations
+# Figure 4 : Histogramme du coût total à la fin de 250 simulations
 
 histogramme(coutFinale, "Dépenses")
 
