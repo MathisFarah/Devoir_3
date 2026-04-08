@@ -1,4 +1,11 @@
-# Fonction qui renvoie les voisins non vaccinés d'un agent mort dans un rayon choisi selon la distance
+"""
+    function VoisinsMort(mort::Agent, rayon::Integer)
+
+Fonction qui renvoie les voisins non vaccinés d'un agent mort dans un rayon choisi selon la distance
+
+mort : un agent qui viens de mourrir et autour duquel nous allons trouver les voisins
+rayon : la distance autour duquel nous allons chercher pour les agents voisins
+"""
 
 function VoisinsMort(mort::Agent, rayon::Integer)
     popVoisins = Agent[]
@@ -16,7 +23,14 @@ function VoisinsMort(mort::Agent, rayon::Integer)
     return popVoisins
 end
 
-# Fonction qui test une population et renvoie les agents qui ont testé positif aux test
+"""
+    function RATPopulation(pop::Population)
+
+Fonction qui test une population d'agent non testé et renvoie les agents qui ont testé positif aux test
+La fonction n'effectue les tests que s'il reste assez d'argent dans le budget puis note les dépenses
+
+pop : Population d'agent qui avoisine un agent qui viens de mourir et auquels nous allons effecter des RAT
+"""
 
 function RATPopulation(pop::Population)
     global budget
@@ -52,7 +66,7 @@ function RATPopulation(pop::Population)
             if efficaciteRAT > rand() && isinfectious(agent)
                 push!(popPositif, agent)
 
-            # Renvoie un faux positif pour une probabilité de 1 - 'efficaciteRAT' si l'agent est sain
+                # Renvoie un faux positif pour une probabilité de 1 - 'efficaciteRAT' si l'agent est sain
 
             elseif efficaciteRAT < rand() && ishealthy(agent)
                 push!(popPositif, agent)
@@ -64,7 +78,15 @@ function RATPopulation(pop::Population)
     return popPositif
 end
 
-# Fonction qui vaccine la population totale selon la population reçu en argument
+"""
+    function VaccinPopulation(popVaccin::Population)
+
+Fonction qui vaccine la population totale selon la population reçu en argument
+La fonction n'effectue les vaccinations que s'il reste assez d'argent dans le budget puis note les dépenses
+Les agents qui se font vacciner ont leur temps de latence de vaccination ajuster 2, le temps d'attente avant que le vaccin fasse effet
+
+pop : Population d'agent qui ont testé positif aux test RAT
+"""
 
 function VaccinPopulation(popVaccin::Population)
     global budget
@@ -88,7 +110,7 @@ function VaccinPopulation(popVaccin::Population)
             push!(eventsVac, VaccinationEvent(tick, agent.id, agent.x, agent.y))
 
             # Ajuste le temps de lattence avant que le vaccin fasse effet
-        
+
             agent.vaccinationclock = 2
         else
             break
@@ -97,7 +119,15 @@ function VaccinPopulation(popVaccin::Population)
 end
 
 # Fonction qui note les voisins d'une population d'agents morts, les testent et vaccinent ceux qui sont positifs dans un rayon donné
+"""
+    function Vaccination(popMort::Population, rayon::Int)
 
+Fonction qui effectue tous les étapes de la vaccintaion, soit trouver les agents voisins d'une population d'agent mort, 
+les tests, puis vaccinent  ceux qui ont testé positif
+
+popMort : Population d'agent mort aux dernier tick
+rayon : Distance dans laquel nous allons chercher pour les voinsins des agents morts
+"""
 function Vaccination(popMort::Population, rayon::Int)
     for mort in popMort
         VaccinPopulation(RATPopulation(VoisinsMort(mort, rayon)))
