@@ -351,7 +351,7 @@ for i in 1:nbSim
         # S'il reste du budget, fait une vaccination et RAT des agents lorsqu'il y a un mort
 
         if budget > coutRAT && length(popMort) > 0
-            Vaccination(popMort, 10)
+            Vaccination(popMort, 21)
         end
 
 
