@@ -1,14 +1,14 @@
-# Le premier type que nous avons besoin de créer est un agent. Les agents se
-# déplacent sur une lattice, et on doit donc suivre leur position. On doit
-# savoir s'ils sont infectieux, et dans ce cas, combien de jours il leur reste:
 
 """
 Représente un individu dans la simulation.
 
 Attributs :
 - x, y : position de l'individu sur la grille
-- clock : nombre de jours restants avant la mort
+- infectiousclock : nombre de jours restants avant la mort
+- vaccinationclock : temps de latence avant que le vaccin fasse effet lorsque vacciné
 - infectious : indique si l'individu est infecté et contagieux
+- vaccinated : indique si l'individu est vacciné et si son vaccin fait effet
+- tested : indique si l'individu est testé lors des RAT pour éviter de les tester plusieurs fois
 - id : identifiant unique
 
 Biologiquement, un individu infecté voit son état se dégrader
@@ -47,9 +47,6 @@ Base.@kwdef mutable struct Landscape
     ymax::Int64 = 25
 end
 
-# On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
-# Puisque la position de l'agent va changer, notre fonction se termine par `!`:
-
 """
 Déplace un individu aléatoirement dans la grille.
 
@@ -82,6 +79,14 @@ dans le paysage.
 """
 const Population = Vector{Agent}
 
+"""
+    function Population(L::Landscape, n::Integer)
+
+Fonction qui crée une population d'agent de nombre 'n' et les places aléatoirement dans une paysage choisi
+
+L : Landscape, donc le paysage (lattice d'une certaine dimension)
+n : nombre d'agent qu'on veut avoir dans la population
+"""
 function Population(L::Landscape, n::Integer)
     return rand(Agent, L, n)
 end

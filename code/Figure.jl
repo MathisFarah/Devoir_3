@@ -1,4 +1,13 @@
-# Figure permettant d'observer le nombre de différents états des agents
+"""
+    function figureEtatSelonTemps(S, I, V)
+
+Figure permettant d'observer le nombre de différents états des agents à travers le temps
+
+S : vecteur contenant le nombre d'agent sains pour chaque tick
+I : vecteur contenant le nombre d'agent infectés pour chaque tick
+V : vecteur contenant le nombre d'agent vaccinés pour chaque tick
+"""
+
 function figureEtatSelonTemps(S, I, V)
     f = Figure()
     ax = Axis(f[1, 1]; xlabel="Générations", ylabel="Population")
@@ -9,8 +18,15 @@ function figureEtatSelonTemps(S, I, V)
     current_figure()
 end
 
+"""
+    function figureEvent(events, typeevent::String)
 
-# Figure permettant de voir quand et où ont eu lieux certains évenements
+Figure permettant de voir quand et où ont eu lieux certains évenements
+
+events : object contenant tous les infromations des évenements d'un certain type
+typeevent : Séries de caractères contenant le type d'event observé pour le titre de la figure
+"""
+
 function figureEvent(events, typeevent::String)
     # Si events ne contient aucune valeur, affiche un message d'erreur
     if length(events) > 0
@@ -28,7 +44,16 @@ function figureEvent(events, typeevent::String)
     end
 end
 
-# Figure permettant d'observer le budget et les dépenses
+"""
+    function figureBudget(budget, RAT, vaccin)
+
+Figure permettant d'observer le budget et les dépenses à travers le temps
+
+budget : vecteur contenant l'argent restant pour chaque tick
+RAT : vecteur contenant les dépenses des tests RAT pour chaque tick
+vaccin : vecteur contenant les dépenses des vaccins pour chaque tick
+"""
+
 function figureBudget(budget, RAT, vaccin)
     f = Figure()
     ax = Axis(f[1, 1]; xlabel="Générations", ylabel="Dollards")
@@ -39,7 +64,16 @@ function figureBudget(budget, RAT, vaccin)
     current_figure()
 end
 
-# Histogramme qui renvoie la fréquence des valeurs contenue dans un vecteur
+"""
+    function histogramme(vecteur, titre::String)
+
+
+Histogramme qui renvoie la fréquence des valeurs contenue dans un vecteur
+
+vecteur : une série de valeur qui sera utilisé dans l'histogrammme
+titre : séries de caractères qui contient le titre pour l'histogramme, dépend du vecteur envoyé
+"""
+
 function histogramme(vecteur, titre::String)
     h = Figure()
     hist(h[1, 1], vecteur, color=:grey40, axis=(title="$titre", xlabel="Nombre d'Argents", ylabel="Fréquences"))
