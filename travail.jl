@@ -31,7 +31,7 @@
 
 # Dans le modèle de dynamique épidémique de propagation d'une maladie infectieuses dans une population qui est naive, quelle stratégie, qui combine dépistage et vaccination, 
 # permet de minimaliser la mortalité dans la population tout en respectant une contrainte de budget limité à 21 000$? 
-# De plus, comment cette stratégie se compare à une situation où il y a absence d'interventation?
+# De plus, comment cette stratégie se compare à une situation où il y a absence d'intervention?
 
 # ## Hypothèses et résultats attendus
 
