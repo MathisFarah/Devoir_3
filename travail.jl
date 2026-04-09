@@ -203,7 +203,7 @@ mortFinale = zeros(Int, nbSim)
 coutFinale = zeros(Int, nbSim)
 
 taillepop = 3750
-population = Population[]
+population = Population()
 tick = 0
 maxlength = 2000
 budget = 21_000
@@ -264,7 +264,7 @@ for i in 1:nbSim
 
     rand(population).infectious = true
 
-    # ## Simulation
+    # Simulation
 
     """
     Boucle principale de la simulation.
@@ -280,23 +280,17 @@ for i in 1:nbSim
     """
 
     while (length(infectious(population)) != 0) & (tick < maxlength)
-
-        ## On spécifie que nous utilisons les variables définies plus haut
-
         global tick, population, budget, depenseRAT, depenseVaccin, eventsInf, eventsVac, eventsRAT
 
         tick += 1
-
-        # Déplacement des individus : Chaque individu se déplace aléatoirement dans l'espace
-        ## Movement
 
         for agent in population
             move!(agent, L; torus=false)
         end
 
-        #  Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
-        #  présents dans la même cellule avec une probabilité de 0.4    
-        ## Infection
+        # Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
+        # présents dans la même cellule avec une probabilité de 0.4    
+        # Infection
 
         for agent in Random.shuffle(infectious(population))
             neighbors = healthy(incell(agent, population))
@@ -312,35 +306,31 @@ for i in 1:nbSim
         end
 
         # Progression de la maladie : Le temps de vie avant la mort diminue pour chaque individu infecté
-        ## Change in survival
+        # Change in survival
 
         for agent in infectious(population)
             agent.infectionclock -= 1
         end
 
-        ## Note tous les agents qui sont morts ce tick
+        # Note tous les agents qui sont morts ce tick
 
         popMort = filter(x -> x.infectionclock == 0, population)
 
-        ## Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
+        # Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
 
         population = filter(x -> x.infectionclock > 0, population)
 
-        ## Change l'état de l'agent à vacciner et non-infecté lorsque la vaccin commence à faire effet
+        # Change l'état de l'agent à vacciner et non-infecté lorsque la vaccin commence à faire effet
+
+
+        # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
+        # Si le temps de latence du vaccin est supérieur à 0, on le décrémente
+        # Si le temps de latence du vaccin atteint 0, la personne devient vacciné et perd son état d'infecté si elle l'était
 
         for agent in population
-
-            # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
-
             agent.tested = false
-
-            # Si le temps de latence du vaccin est supérieur à 0, on le décrémente
-
             if agent.vaccinationclock > 0
                 agent.vaccinationclock -= 1
-
-                # Si le temps de latence du vaccin atteint 0, la personne devient vacciné et perd son état d'infecté si elle l'était
-
                 if agent.vaccinationclock == 0
                     agent.vaccinated = true
                     agent.infectious = false
