@@ -237,8 +237,7 @@ eventsRAT = RATEvent[]
 
 for i in 1:nbSim
 
-    # Réinitialse les valeurs de chacun de ces paramètres avant chaque simulation
-
+    ## Réinitialse les valeurs de ces paramètres avant chaque simulation
     global tick = 0
     global budget = 21_000
     global depenseRAT = 0
@@ -253,50 +252,40 @@ for i in 1:nbSim
     global depenseRATVecteur = zeros(Int64, maxlength)
     global depenseVaccinVecteur = zeros(Int64, maxlength)
 
-    # Et on génère notre population aléatoire initiale:
+    ## On génère notre population aléatoire initaile:
 
     global population = Population(L, taillepop)
 
-    # Pour commencer la simulation, il faut identifier un cas index, que nous allons
-    # choisir au hasard dans la population:
-
-    # Sélection aléatoire d'un individu initialement infecté (cas index)
+    ## Sélection aléatoire d'un individu initialement infecté (cas index)
 
     rand(population).infectious = true
 
-    # Simulation
-
-    """
-    Boucle principale de la simulation.
-    
-    À chaque itération :
-    - les individus se déplacent
-    - les infections ont lieu
-    - les individus infectés progressent vers la mort
-    - les morts sont retirés
-    
-    La simulation s'arrête lorsqu'il n'y a plus d'infecté
-    ou lorsque la durée maximale est atteinte.
-    """
+    ## Simulation
 
     while (length(infectious(population)) != 0) & (tick < maxlength)
+
+        ## On spécifie que nous utilisons les variables définies plus haut
+
         global tick, population, budget, depenseRAT, depenseVaccin, eventsInf, eventsVac, eventsRAT
 
         tick += 1
 
+        ## Mouvement de chaque individu ainsi que réinitialise son état à non-testé
+
         for agent in population
             move!(agent, L; torus=false)
+            agent.tested = false
         end
 
-        # Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
-        # présents dans la même cellule avec une probabilité de 0.4    
-        # Infection
+        ## Transmission de la maladie : Les individus infectieux peuvent contaminer les individus sains
+        ## présents dans la même cellule avec une probabilité de 0.4    
+        ## Infection
 
         for agent in Random.shuffle(infectious(population))
             neighbors = healthy(incell(agent, population))
             for neighbor in neighbors
 
-                # Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné
+                ## Infecté par une probabilité de 0,4 ET s'il n'est pas vacciné
 
                 if rand() <= 0.4 && !isvaccinated(neighbor)
                     neighbor.infectious = true
@@ -305,30 +294,29 @@ for i in 1:nbSim
             end
         end
 
-        # Progression de la maladie : Le temps de vie avant la mort diminue pour chaque individu infecté
-        # Change in survival
+        ## Progression de la maladie : Le temps de vie avant la mort diminue pour chaque individu infecté
+        ## Change in survival
 
         for agent in infectious(population)
             agent.infectionclock -= 1
         end
 
-        # Note tous les agents qui sont morts ce tick
+        ## Note tous les agents qui sont morts ce tick
 
         popMort = filter(x -> x.infectionclock == 0, population)
 
-        # Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
+        ## Suppression des individus morts : Les individus dont le temps est écoulé sont retirés de la population
 
         population = filter(x -> x.infectionclock > 0, population)
 
-        # Change l'état de l'agent à vacciner et non-infecté lorsque la vaccin commence à faire effet
+        ## Change l'état de l'agent à vacciner et non-infecté lorsque la vaccin commence à faire effet
 
 
-        # Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
-        # Si le temps de latence du vaccin est supérieur à 0, on le décrémente
-        # Si le temps de latence du vaccin atteint 0, la personne devient vacciné et perd son état d'infecté si elle l'était
+        ## Réinitialse l'état de l'agent non-testé s'il a été testé au tick précédent
+        ## Si le temps de latence du vaccin est supérieur à 0, on le décrémente
+        ## Si le temps de latence du vaccin atteint 0, la personne devient vacciné et perd son état d'infecté si elle l'était
 
         for agent in population
-            agent.tested = false
             if agent.vaccinationclock > 0
                 agent.vaccinationclock -= 1
                 if agent.vaccinationclock == 0
@@ -338,20 +326,20 @@ for i in 1:nbSim
             end
         end
 
-        # S'il reste du budget, fait une vaccination et RAT des agents lorsqu'il y a un mort
+        ## S'il reste du budget, fait une vaccination et RAT des agents lorsqu'il y a un mort
 
         if budget > coutRAT && length(popMort) > 0
             Vaccination(popMort, 21)
         end
 
 
-        # Enregistrement des données : Stock le nombre d'individus sains et infectés à chaque instant
+        ## Enregistrement des données : Stock le nombre d'individus sains et infectés à chaque instant
 
         S[tick] = length(healthy(population))
         I[tick] = length(infectious(population))
         V[tick] = length(vaccinated(population))
 
-        # Enregistrement des données : Stock les dépenses de chaque instant
+        ## Enregistrement des données : Stock les dépenses de chaque instant
 
         budgetVecteur[tick] = budget
         depenseRATVecteur[tick] = depenseRAT
@@ -360,7 +348,7 @@ for i in 1:nbSim
 
     end
 
-    # Coupe la longueur des informations au dernier tick où de l'infromation à été enregistré
+    ## Coupe la longueur des informations au dernier tick où de l'infromation à été enregistré
 
     S = S[1:tick]
     I = I[1:tick]
@@ -369,8 +357,8 @@ for i in 1:nbSim
     depenseRATVecteur = depenseRATVecteur[1:tick]
     depenseVaccinVecteur = depenseVaccinVecteur[1:tick]
 
-    # Enregistre le nombre de mort ainsi que le coût total à la fin de la simulation
-    mortFinale[i] = taillepop - length(S) - length(I) - length(V)
+    ## Enregistre le nombre de mort ainsi que le coût total à la fin de la simulation
+    mortFinale[i] = taillepop - length(population)
     coutFinale[i] = budgetVecteur[1] - budget
 
 end

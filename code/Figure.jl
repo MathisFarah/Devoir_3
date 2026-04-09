@@ -28,7 +28,7 @@ typeevent : Séries de caractères contenant le type d'event observé pour le ti
 """
 
 function figureEvent(liste_events, typeevent::String)
-    # Si events ne contient aucune valeur, affiche un message d'erreur
+    ## Si events ne contient aucune valeur, affiche un message d'erreur
     if length(liste_events) > 0
         t = [event.time for event in events]
         pos = [(event.x, event.y) for event in liste_events]
