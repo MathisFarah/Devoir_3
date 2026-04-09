@@ -27,20 +27,21 @@ events : object contenant tous les infromations des évenements d'un certain typ
 typeevent : Séries de caractères contenant le type d'event observé pour le titre de la figure
 """
 
-function figureEvent(events, typeevent::String)
-    # Si events ne contient aucune valeur, affiche un message d'erreur
-    if length(events) > 0
+function figureEvent(liste_events, typeevent::String)
+    ## Si events ne contient aucune valeur, affiche un message d'erreur
+    if length(liste_events) > 0
         t = [event.time for event in events]
-        pos = [(event.x, event.y) for event in events]
+        pos = [(event.x, event.y) for event in liste_events]
 
         f = Figure()
         ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
         hm = scatter!(ax, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
         Colorbar(f[1, 2], hm, label="Time of $typeevent")
         hidedecorations!(ax)
-        current_figure()
+        return f
     else
         @warn "Il n'y a aucune information enregistrée dans l'event"
+        return Figure()
     end
 end
 

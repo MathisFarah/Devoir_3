@@ -26,8 +26,8 @@ Base.@kwdef mutable struct Agent
     id::UUIDs.UUID = UUIDs.uuid4()
 end
 
-# La deuxième structure dont nous aurons besoin est un paysage, qui est défini
-# par les coordonnées min/max sur les axes x et y:
+## La deuxième structure dont nous aurons besoin est un paysage, qui est défini
+## par les coordonnées min/max sur les axes x et y:
 
 """
 Définit l'environnement spatial de la simulation.
