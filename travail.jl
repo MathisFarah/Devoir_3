@@ -220,20 +220,20 @@ S = zeros(Int64, maxlength)
 I = zeros(Int64, maxlength)
 V = zeros(Int64, maxlength)
 
-# Pour étudier comment l'argent est dépensé
+## Pour étudier comment l'argent est dépensé
 
 budgetVecteur = zeros(Int64, maxlength)
 depenseRATVecteur = zeros(Int64, maxlength)
 depenseVaccinVecteur = zeros(Int64, maxlength)
 
-# Mais nous allons aussi stocker tous les évènements d'infections, vaccinations et RAT qui ont lieu
-# pendant la simulation:
+## Mais nous allons aussi stocker tous les évènements d'infections, vaccinations et RAT qui ont lieu
+## pendant la simulation:
 
 eventsInf = InfectionEvent[]
 eventsVac = VaccinationEvent[]
 eventsRAT = RATEvent[]
 
-# Boucle afin de faire la simluation plusieurs fois
+## Boucle afin de faire la simluation plusieurs fois
 
 for i in 1:nbSim
 
