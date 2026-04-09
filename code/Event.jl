@@ -1,4 +1,4 @@
-# Création de différent type afin de stocker les événements d'infections, de vaccinations et RAT
+# Création de différents types afin de stocker les événements d'infections, de vaccinations et RAT
 
 struct InfectionEvent
     time::Int64

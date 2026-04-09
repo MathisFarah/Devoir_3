@@ -23,7 +23,7 @@ end
 
 Figure permettant de voir quand et où ont eu lieux certains évenements
 
-events : object contenant tous les infromations des évenements d'un certain type
+events : object contenant toutes les infromations des évenements d'un certain type
 typeevent : Séries de caractères contenant le type d'event observé pour le titre de la figure
 """
 
@@ -69,9 +69,9 @@ end
     function histogramme(vecteur, titre::String)
 
 
-Histogramme qui renvoie la fréquence des valeurs contenue dans un vecteur
+Histogramme qui renvoie la fréquence des valeurs contenues dans un vecteur
 
-vecteur : une série de valeur qui sera utilisé dans l'histogrammme
+vecteur : une série de valeurs qui sera utilisée dans l'histogrammme
 titre : séries de caractères qui contient le titre pour l'histogramme, dépend du vecteur envoyé
 """
 

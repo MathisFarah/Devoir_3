@@ -26,10 +26,10 @@ end
 """
     function RATPopulation(pop::Population)
 
-Fonction qui test une population d'agent non testé et renvoie les agents qui ont testé positif aux test
+Fonction qui test une population d'agent non testé et renvoie les agents qui ont testé positif au test
 La fonction n'effectue les tests que s'il reste assez d'argent dans le budget puis note les dépenses
 
-pop : Population d'agent qui avoisine un agent qui viens de mourir et auquels nous allons effecter des RAT
+pop : Population d'agent qui avoisine un agent qui viens de mourir et auquels nous allons effectuer des RAT
 """
 
 function RATPopulation(pop::Population)
@@ -45,11 +45,11 @@ function RATPopulation(pop::Population)
 
         if budget > coutRAT
 
-            ## Enlève le cout du test
+            ## Enlève le coût du test
 
             budget -= coutRAT
 
-            ## Ajout le cout aux dépenses
+            ## Ajoute le coût aux dépenses
 
             depenseRAT += coutRAT
 
@@ -83,7 +83,7 @@ end
 
 Fonction qui vaccine la population totale selon la population reçu en argument
 La fonction n'effectue les vaccinations que s'il reste assez d'argent dans le budget puis note les dépenses
-Les agents qui se font vacciner ont leur temps de latence de vaccination ajuster 2, le temps d'attente avant que le vaccin fasse effet
+Les agents qui se font vacciner ont leur temps de latence de vaccination ajuster à 2, le temps d'attente avant que le vaccin fasse effet
 
 pop : Population d'agent qui ont testé positif aux test RAT
 """
@@ -97,7 +97,7 @@ function VaccinPopulation(popVaccin::Population)
 
         if budget > coutVaccin
 
-            ## Enlève le cout du test
+            ## Enlève le coût du test
 
             budget -= coutVaccin
 
@@ -121,11 +121,11 @@ end
 """
     function Vaccination(popMort::Population, rayon::Int)
 
-Fonction qui effectue tous les étapes de la vaccintaion, soit trouver les agents voisins d'une population d'agent mort, 
-les tests, puis vaccinent  ceux qui ont testé positif
+Fonction qui effectue toutes les étapes de la vaccintaion, soit trouver les agents voisins d'une population d'agent mort, 
+les tests, puis vaccinent ceux qui ont testé positif
 
 popMort : Population d'agent mort aux dernier tick
-rayon : Distance dans laquel nous allons chercher pour les voinsins des agents morts
+rayon : Distance dans laquel nous allons chercher pour les voisins des agents morts
 """
 function Vaccination(popMort::Population, rayon::Int)
     for mort in popMort
