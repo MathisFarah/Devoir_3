@@ -385,11 +385,35 @@ histogramme(coutFinale, "Dépenses")
 
 # # Discussion
 
-# On peut aussi citer des références dans le document `references.bib`, qui doit
-# être au format BibTeX. Les références peuvent être citées dans le texte avec
-# `@` suivi de la clé de citation. Par exemple: @ermentrout1993cellular -- la
-# bibliographie sera ajoutée automatiquement à la fin du document.
+# Les résultats obtenus montrent que la stratégie combinant dépistage ciblé et vaccination permet de réduire la mortalité par rapport à une situation sans intervention. 
+# En concentrant les tests dans un rayon de 21 cellules autour des individus décédés, il est possible de cibler les zones où la probabilité de présence d’individus 
+# infectieux est la plus élevée. Cette approche permet d’optimiser l’utilisation du budget puisque les tests sont moins coûteux que les vaccins.
+# La vaccination des individus testés positifs permet de limiter la propagation de la maladie. Même si le vaccin n’est actif qu’après un délai de deux générations, 
+# il contribue à réduire le nombre d’individus infectieux à moyen terme. Le fait de vacciner uniquement les individus détectés permet là aussi d’éviter un usage excessif du budget, 
+# ce qui est essentiel étant donné le coût relativement plus élevé des vaccins.
 
-# Le format de la bibliographie est American Physics Society, et les références
-# seront correctement présentées dans ce format. Vous ne devez/pouvez pas éditer
-# la bibliographie à la main
+# Les simulations répétées permettent de représenter la variabilité dans les résultats en ce qui concerne la mortalité finale et les dépenses totales. Cette variabilité s’explique 
+# par la nature stochastique du modèle, où la propagation de la maladie dépend de contacts aléatoires entre individus. Dans certains cas, l’épidémie se propage rapidement avant que 
+# l’intervention ne soit mise en place, ce qui limite son efficacité. Dans d’autres cas, la détection précoce permet d'anticiper plus efficacement la propagation. 
+# Cette stochastique est importante dans notre modèle, car elle permet de refléter plus vraisemblablement la réalité imprévisible d'une épidémie. 
+# Malgré le non-contrôle de cette variabilité, la stratégie reste globalement efficace car elle permet dans une majorité de simulations de réduire la mortalité tout en respectant 
+# la contrainte budgétaire. Le compromis entre le coût des tests et celui des vaccins était l'enjeu principal : les tests permettent de cibler les interventions, tandis que 
+# les vaccins sont utilisés de manière plus stratégique pour limiter la transmission.
+
+# Ce modèle présente cependant plusieurs limites. Tout d’abord, il suppose que la maladie est toujours fatale, ce qui amplifie son impact comparativement à la plupart des maladies 
+# infectieuses en situation réelle. De plus, le vaccin est considéré comme parfaitement efficace, ce qui simplifie la réalité où l’efficacité vaccinale est souvent inférieure à 100 %. 
+# Également, les interactions entre individus sont limitées à des contacts locaux sur une grille, ce qui ne reflète pas la complexité des réseaux de contacts humains. 
+# Le modèle suppose de plus que les individus infectieux sont totalement asymptomatiques et que la détection repose uniquement sur des tests, ce qui constitue une simplification 
+# des dynamiques réelles. Enfin, le fait que l’intervention ne commence qu’après le premier décès peut retarder la mise en place des mesures de contrôle ce qui peut potentiellement
+# réduire leur efficacité dans certaines simulations.
+# Malgré ces limites, ce modèle permet de comprendre l’importance d’une stratégie ciblée combinant dépistage et vaccination ainsi que l'enjeu des contraintes budgétaires
+# sur la gestion d’une épidémie.
+
+
+
+
+
+
+
+
+
