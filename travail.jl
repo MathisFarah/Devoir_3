@@ -281,8 +281,7 @@ for i in 1:nbSim
     end
 
     mortSansIntervention[i] = taillepop - length(population)
-    sansIntervention = histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
-
+    
 end
 
 # Simulation avec intervention 
@@ -426,8 +425,7 @@ figureEtatSelonTemps(S, I, V)
 
 # Figure 3 : Histogramme du nombre d'agents morts à la fin de 250 simulations sans intervention
 
-sansIntervention
-
+histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
 # Figure 4 : Histogramme du nombre d'agents morts à la fin de 250 simulations avec vaccination
 
 histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
