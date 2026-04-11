@@ -119,7 +119,6 @@ UUIDs.uuid4()
 
 # ## Inclure du code
 
-# Type représentant une population d'individus
 include("code/Agent_Landscape.jl")
 include("code/Figure.jl")
 include("code/RAT_Vaccin.jl")
