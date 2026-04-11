@@ -400,17 +400,19 @@ histogramme(coutFinale, "Dépenses")
 # la contrainte budgétaire. Le compromis entre le coût des tests et celui des vaccins était l'enjeu principal : les tests permettent de cibler les interventions, tandis que 
 # les vaccins sont utilisés de manière plus stratégique pour limiter la transmission.
 
-# Ce modèle présente cependant plusieurs limites. Tout d’abord, il suppose que la maladie est toujours fatale, ce qui amplifie son impact comparativement à la plupart des maladies 
-# infectieuses en situation réelle. De plus, le vaccin est considéré comme parfaitement efficace, ce qui simplifie la réalité où l’efficacité vaccinale est souvent 
-# inférieure à 100 % @graham2024. 
+# Ce modèle présente cependant plusieurs limites. Tout d’abord, il suppose que la maladie est toujours fatale, ce qui amplifie son impact et surestime la gravité épidémique 
+# par rapport à la pluspart des maladies infectieuses en situation réelle, comme la grippe saisonnière ou le COVID-19, où le taux de mortalité est modéré voir très faible @bager2021.
+# De plus, le vaccin est considéré comme parfaitement efficace, ce qui simplifie la réalité où l’efficacité vaccinale est souvent inférieure à 100 % @graham2024. 
 # Également, les interactions entre individus sont limitées à des contacts locaux sur une grille, ce qui ne reflète pas la complexité des réseaux de contacts humains @zekri2002.
 # Le modèle suppose de plus que les individus infectieux sont totalement asymptomatiques et que la détection repose uniquement sur des tests, ce qui constitue une simplification 
-# des dynamiques réelles. Enfin, le fait que l’intervention ne commence qu’après le premier décès peut retarder la mise en place des mesures de contrôle ce qui peut potentiellement
-# réduire leur efficacité dans certaines simulations.
+# des dynamiques réelles : le rhume, la varicelle par exemple présentent des symptômes permettant d’identifier les individus infectés, ce qui influence la détection et le contrôle
+# de l’épidémie @JuntasMorales2009. Enfin, le fait que l’intervention ne commence qu’après le premier décès peut retarder la mise en place des mesures de contrôle ce qui peut 
+# potentiellement réduire leur efficacité dans certaines simulations.
 # Malgré ces limites, ce modèle permet de comprendre l’importance d’une stratégie ciblée combinant dépistage et vaccination ainsi que l'enjeu des contraintes budgétaires
 # sur la gestion d’une épidémie.
 
-
+# Enfin, les résultats obtenus confirment les hypothèses initiales selon lesquelles une stratégie combinant dépistage ciblé et vaccination permet d’optimiser l’utilisation 
+# du budget tout en réduisant la mortalité dans un contexte de transmission locale et d’individus asymptomatiques.
 
 
 
