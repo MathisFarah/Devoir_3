@@ -200,6 +200,7 @@ Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population
 
 nbSim = 50
 mortFinale = zeros(Int, nbSim)
+mortSansIntervention = zeros(Int, nbSim)
 coutFinale = zeros(Int, nbSim)
 
 taillepop = 3750
@@ -233,7 +234,57 @@ eventsInf = InfectionEvent[]
 eventsVac = VaccinationEvent[]
 eventsRAT = RATEvent[]
 
-## Boucle afin de faire la simluation plusieurs fois
+# Simulation sans intervention 
+
+for i in 1:nbSim
+
+    while (length(infectious(population)) != 0) & (tick < maxlength)
+
+        ## On spécifie que nous utilisons les variables définies plus haut
+        global tick = 0
+        global S = zeros(Int64, maxlength)
+        global I = zeros(Int64, maxlength)
+        global population = Population(L, taillepop)
+
+
+        tick += 1
+
+        ## Movement
+        for agent in population
+            move!(agent, L; torus=false)
+        end
+
+        ## Infection
+        for agent in Random.shuffle(infectious(population))
+            neighbors = healthy(incell(agent, population))
+            for neighbor in neighbors
+                if rand() <= 0.4
+                    neighbor.infectious = true
+                    push!(events, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
+                end
+            end
+        end
+
+        ## Change in survival
+        for agent in infectious(population)
+            agent.clock -= 1
+        end
+
+        ## Remove agents that died
+        population = filter(x -> x.clock > 0, population)
+
+        ## Store population size
+        S[tick] = length(healthy(population))
+        I[tick] = length(infectious(population))
+
+    end
+
+    mortSansIntervention[i] = taillepop - length(population)
+
+end
+
+sansIntervention = histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
+# Simulation avec intervention 
 
 for i in 1:nbSim
 
@@ -372,11 +423,15 @@ figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
 figureEtatSelonTemps(S, I, V)
 
-# Figure 3 : Histogramme du nombre d'agents morts à la fin de 250 simulations
+# Figure 3 : Histogramme du nombre d'agents morts à la fin de 250 simulations sans intervention
 
-histogramme(mortFinale, "Morts")
+sansIntervention
 
-# Figure 4 : Histogramme du coût total à la fin de 250 simulations
+# Figure 4 : Histogramme du nombre d'agents morts à la fin de 250 simulations avec vaccination
+
+histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
+
+# Figure 5 : Histogramme du coût total à la fin de 250 simulations
 
 histogramme(coutFinale, "Dépenses")
 

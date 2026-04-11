@@ -1,3 +1,5 @@
+# Code contenant les fonctions pour les Figures
+
 """
     function figureEtatSelonTemps(S, I, V)
 
@@ -77,6 +79,6 @@ titre : séries de caractères qui contient le titre pour l'histogramme, dépend
 
 function histogramme(vecteur, titre::String)
     h = Figure()
-    hist(h[1, 1], vecteur, color=:grey40, axis=(title="$titre", xlabel="Nombre d'Argents", ylabel="Fréquences"))
-    current_figure()
+    hist(h[1, 1], vecteur, color=:grey40, axis=(title="$titre", xlabel="Valeurs", ylabel="Fréquences"))
+    return current_figure()
 end
