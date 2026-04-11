@@ -237,14 +237,17 @@ eventsRAT = RATEvent[]
 
 for i in 1:nbSim
 
+    ## On spécifie que nous utilisons les variables définies plus haut
+    global tick = 0
+    global S = zeros(Int64, maxlength)
+    global I = zeros(Int64, maxlength)
+    global population = Population(L, taillepop)
+
+    rand(population).infectious = true
+
+
     while (length(infectious(population)) != 0) & (tick < maxlength)
-
-        ## On spécifie que nous utilisons les variables définies plus haut
-        global tick = 0
-        global S = zeros(Int64, maxlength)
-        global I = zeros(Int64, maxlength)
-        global population = Population(L, taillepop)
-
+        global tick, S, I, population
 
         tick += 1
 
@@ -259,18 +262,17 @@ for i in 1:nbSim
             for neighbor in neighbors
                 if rand() <= 0.4
                     neighbor.infectious = true
-                    push!(events, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
                 end
             end
         end
 
         ## Change in survival
         for agent in infectious(population)
-            agent.clock -= 1
+            agent.infectionclock -= 1
         end
 
         ## Remove agents that died
-        population = filter(x -> x.clock > 0, population)
+        population = filter(x -> x.infectionclock > 0, population)
 
         ## Store population size
         S[tick] = length(healthy(population))
@@ -279,10 +281,10 @@ for i in 1:nbSim
     end
 
     mortSansIntervention[i] = taillepop - length(population)
+    sansIntervention = histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
 
 end
 
-sansIntervention = histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
 # Simulation avec intervention 
 
 for i in 1:nbSim
