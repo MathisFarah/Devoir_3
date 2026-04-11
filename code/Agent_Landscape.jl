@@ -1,4 +1,4 @@
-
+# Code des Agents et du Landscape
 """
 Représente un individu dans la simulation.
 

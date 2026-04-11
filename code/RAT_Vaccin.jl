@@ -1,3 +1,4 @@
+# Code des fonctions de l'intervention de vaccination
 """
     function VoisinsMort(mort::Agent, rayon::Integer)
 
