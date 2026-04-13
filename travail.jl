@@ -436,6 +436,24 @@ histogramme(coutFinale, "Dépenses")
 
 # # Présentation des résultats
 
+# Les résultats obtenus permettent de comparer l’évolution de l’épidémie ainsi que l’utilisation du budget dans les scénarios avec et sans intervention.
+
+# On observe d’abord que, dans les simulations avec intervention, les dépenses liées aux tests de dépistage sont plus importantes au début de la simulation. 
+# Les dépenses en vaccination, quant à elles, augmentent de manière plus progressive. Cela indique que la stratégie repose d’abord sur l’identification 
+# des individus infectieux avant de procéder à leur vaccination.
+
+# L’évolution des états de la population montre que le nombre d’individus infectieux augmente rapidement au début de la simulation, puis diminue progressivement après 
+# la mise en place de l’intervention. En parallèle, le nombre d’individus vaccinés augmente au cours du temps, ce qui est associé à une diminution du nombre de nouveaux cas.
+
+# La comparaison entre les simulations avec et sans intervention met en évidence une différence dans le nombre total de décès. En absence d’intervention, les valeurs observées 
+# sont généralement élevées et concentrées dans un intervalle restreint. À l’inverse, avec intervention, les résultats sont plus dispersés et incluent des valeurs de mortalité
+# plus faibles.
+
+# Cette dispersion est également visible dans le coût total de la campagne. Certaines simulations utilisent une grande partie du budget disponible, tandis que d’autres
+# consomment moins de ressources. Cela reflète une variabilité dans la propagation de la maladie selon les simulations.
+
+# Dans l’ensemble, les résultats montrent que l’introduction de la stratégie modifie la dynamique de l’épidémie ainsi que la manière dont le budget est utilisé, tout en 
+# introduisant une variabilité plus importante entre les simulations.
 
 # # Discussion
 
