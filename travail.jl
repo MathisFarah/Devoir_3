@@ -453,7 +453,7 @@ histogramme(coutFinale, "Dépenses")
 # consomment moins de ressources. Cela reflète une variabilité dans la propagation de la maladie selon les simulations.
 
 # Dans l’ensemble, les résultats montrent que l’introduction de la stratégie modifie la dynamique de l’épidémie ainsi que la manière dont le budget est utilisé, tout en 
-# introduisant une variabilité plus importante entre les simulations.
+# introduisant une variabilité plus importante entre les simulations. 
 
 # # Discussion
 
