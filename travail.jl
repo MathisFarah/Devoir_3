@@ -413,34 +413,55 @@ for i in 1:nbSim
     coutFinale[i] = budgetVecteur[1] - budget
 
 end
-# ## Analyse des résultats
+# ## Présentation des résultats
 
 # Figure 1 : Représentation graphique des dépenses et du budget d'une seule simluation à travers le temps
 
 figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
+# La Figure 1 montre l’évolution du budget ainsi que les dépenses associées aux tests de dépistage (RAT) et à la vaccination. On observe que les dépenses en tests augmentent 
+# rapidement après le début de l’intervention, atteignant plusieurs milliers de dollars au cours des premières générations.  Les dépenses en vaccination augmentent plus progressivement. 
+# Dans la plupart des simulations, le budget total, initialement de 21 000$, jusqu’à atteindre des valeurs proches de zéro en fin de simulation.
+
 # Figure 2 : Représentation graphique des différents états des agents à travers le temps
 
 figureEtatSelonTemps(S, I, V)
 
+# La Figure 2 représente l’évolution du nombre d’individus dans chaque état au cours du temps. Le nombre d’individus infectieux augmente rapidement au début de la simulation,
+# pouvant atteindre plusieurs centaines d’individus, puis diminue progressivement après la mise en place de l’intervention. En parallèle, le nombre d’individus vaccinés augmente
+# progressivement pour atteindre une proportion importante de la population.
+
 # Figure 3 : Histogramme du nombre d'agents morts à la fin de 250 simulations sans intervention
 
 histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
+
+# La Figure 3 présente la distribution du nombre total de décès en absence d’intervention. On observe que le nombre de morts est généralement élevé, avec des valeurs proches 
+# de la taille totale de la population (plus de 3000 individus), et une faible variabilité entre les simulations.
+
 # Figure 4 : Histogramme du nombre d'agents morts à la fin de 250 simulations avec vaccination
 
 histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
+
+# La Figure 4 montre la distribution du nombre de décès lorsque la stratégie de dépistage et de vaccination est appliquée. On observe une réduction du nombre de morts 
+# dans plusieurs simulations, avec certaines valeurs nettement inférieures à celles observées sans intervention, parfois en dessous de 2000 décès. Les résultats sont également
+# plus dispersés.
 
 # Figure 5 : Histogramme du coût total à la fin de 250 simulations
 
 histogramme(coutFinale, "Dépenses")
 
-# # Présentation des résultats
+# Enfin, la Figure 5 présente la distribution du coût total de la campagne pour l’ensemble des simulations. On observe que, dans plusieurs cas, les dépenses totales
+# se rapprochent du budget maximal de 21 000$, tandis que dans d’autres simulations, une partie du budget n’est pas entièrement utilisée, avec des coûts plus faibles.
 
+
+# # Analyse des résultats
+
+# Les résultats des simulations sont présentés sous forme de figures permettant d’illustrer à la fois la dynamique de l’épidémie et l’utilisation du budget au cours du temps.
 # Les résultats obtenus permettent de comparer l’évolution de l’épidémie ainsi que l’utilisation du budget dans les scénarios avec et sans intervention.
 
 # On observe d’abord que, dans les simulations avec intervention, les dépenses liées aux tests de dépistage sont plus importantes au début de la simulation. 
 # Les dépenses en vaccination, quant à elles, augmentent de manière plus progressive. Cela indique que la stratégie repose d’abord sur l’identification 
-# des individus infectieux avant de procéder à leur vaccination.
+# des individus infectieux avant de procéder à leur vaccination. plusieurs simulations ont été réalisées pour évaluer l'efficacité de la stratégie.
 
 # L’évolution des états de la population montre que le nombre d’individus infectieux augmente rapidement au début de la simulation, puis diminue progressivement après 
 # la mise en place de l’intervention. En parallèle, le nombre d’individus vaccinés augmente au cours du temps, ce qui est associé à une diminution du nombre de nouveaux cas.
@@ -453,7 +474,7 @@ histogramme(coutFinale, "Dépenses")
 # consomment moins de ressources. Cela reflète une variabilité dans la propagation de la maladie selon les simulations.
 
 # Dans l’ensemble, les résultats montrent que l’introduction de la stratégie modifie la dynamique de l’épidémie ainsi que la manière dont le budget est utilisé, tout en 
-# introduisant une variabilité plus importante entre les simulations. 
+# introduisant une variabilité plus importante entre les simulations répétées. 
 
 # # Discussion
 
