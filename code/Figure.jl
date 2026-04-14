@@ -3,7 +3,7 @@
 """
     function figureEtatSelonTemps(S, I, V)
 
-Figure permettant d'observer le nombre de différents états des agents à travers le temps
+Figure permettant d'observer le nombre de différents états des agents à travers le temps d'une simulation
 
 S : vecteur contenant le nombre d'agent sains pour chaque tick
 I : vecteur contenant le nombre d'agent infectés pour chaque tick
@@ -23,7 +23,7 @@ end
 """
     function figureEvent(events, typeevent::String)
 
-Figure permettant de voir quand et où ont eu lieux certains évenements
+Figure permettant de voir quand et où ont eu lieux certains évenements durant une simulation
 
 events : object contenant toutes les infromations des évenements d'un certain type
 typeevent : Séries de caractères contenant le type d'event observé pour le titre de la figure
@@ -50,7 +50,7 @@ end
 """
     function figureBudget(budget, RAT, vaccin)
 
-Figure permettant d'observer le budget et les dépenses à travers le temps
+Figure permettant d'observer le budget et les dépenses à travers le temps d'une simulation
 
 budget : vecteur contenant l'argent restant pour chaque tick
 RAT : vecteur contenant les dépenses des tests RAT pour chaque tick

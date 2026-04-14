@@ -419,23 +419,23 @@ end
 # et les Figures 3–5 comparent les résultats entre simulations.
 
 
-# Figure 1 : Représentation graphique des dépenses et du budget d'une seule simluation à travers le temps
+# Figure 1 : Représentation graphique des dépenses et du budget d'une seule simulation à travers le temps
 
 figureBudget(budgetVecteur, depenseRATVecteur, depenseVaccinVecteur)
 
-# La Figure 1 présente l’évolution du budget restant ainsi que des dépenses associées aux tests de dépistage (RAT) et à la vaccination au cours du temps.
+# La Figure 1 présente l’évolution du budget restant ainsi que des dépenses associées aux tests de dépistage (RAT) et à la vaccination au cours du temps d'une simulation.
 # Le budget initial est de 21 000$ et diminue progressivement au fil des générations. Les dépenses liées aux tests RAT augmentent rapidement après le début de l’intervention,
 # atteignant environ 10 000$ vers les générations 40–50. Les dépenses en vaccination augmentent plus progressivement et atteignent environ 3 000 à 4 000$ en fin de simulation.
 # Le budget restant diminue jusqu’à atteindre des valeurs proches de 5 000$ à la fin de la simulation.
 
-# Figure 2 : Représentation graphique des différents états des agents à travers le temps
+# Figure 2 : Représentation graphique des différents états des agents à travers le temps d'une seule simulation
 
 figureEtatSelonTemps(S, I, V)
 
-# La Figure 2 montre l’évolution du nombre d’individus dans les différents états (susceptibles, infectieux et vaccinés) au cours du temps. Le nombre d’individus infectieux
-# augmente rapidement au début de la simulation pour atteindre un maximum d’environ 250 à 350 individus autour des générations 20 à 30. Par la suite, ce nombre diminue
-# progressivement jusqu’à atteindre des valeurs proches de zéro en fin de simulation. Le nombre d’individus vaccinés augmente progressivement à partir du début de l’intervention
-# pour atteindre environ 150 à 200 individus. Le nombre d’individus susceptibles diminue progressivement au cours du temps, passant d’environ 3750 au début de la simulation 
+# La Figure 2 montre l’évolution du nombre d’individus dans les différents états (susceptibles, infectieux et vaccinés) au cours du temps pour une simulation. Le nombre d’individus infectieux
+# augmentent rapidement au début de la simulation pour atteindre un maximum d’environ 250 à 350 individus autour des générations 20 à 30. Par la suite, ce nombre diminue
+# progressivement jusqu’à atteindre des valeurs proches de zéro en fin de simulation. Le nombre d’individus vaccinés augmentent progressivement à partir du début de l’intervention
+# pour atteindre environ 150 à 200 individus. Le nombre d’individus susceptibles diminuent progressivement au cours du temps, passant d’environ 3750 au début de la simulation 
 # à environ 3300 en fin de simulation.
 
 # Figure 3 : Histogramme du nombre d'agents morts à la fin de 50 simulations sans intervention
@@ -443,16 +443,16 @@ figureEtatSelonTemps(S, I, V)
 histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
 
 # La Figure 3 présente la distribution du nombre total de décès en absence d’intervention. Les résultats montrent que la majorité des simulations produisent un nombre de décès
-# compris entre 2800 et 3200 individus. La distribution est relativement concentrée autour de ces valeurs, avec une faible dispersion. Très peu de simulations présentent 
-# des valeurs significativement plus faibles ou plus élevées.
+# compris entre 2800 et 3200 individus. La distribution est relativement peu concentrée vu l'intervalle de 400 individus, donc une dispersion relativement élevée. 
+# Il y a cependant peu de simulations qui présentent des valeurs plus faibles ou plus élevées de cette intervalle de 2800 à 3200 individus.
 
 # Figure 4 : Histogramme du nombre d'agents morts à la fin de 50 simulations avec vaccination
 
 histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
 
-# La Figure 4 montre la distribution du nombre de décès lorsque la stratégie de dépistage et de vaccination est appliquée. Les valeurs observées sont plus étalées,
+# La Figure 4 montre la distribution du nombre de décès lorsque la stratégie de dépistage et de vaccination est appliquée. Les valeurs observées sont peu variables,
 # avec un nombre de décès variant approximativement entre 1 et 20 individus. Plusieurs simulations présentent des valeurs faibles, souvent comprises entre 2 et 6 décès, 
-# et certaines peuvent atteindre des valeurs plus élevées, jusqu’à environ 20 décès. 
+# et certaines peuvent atteindre des valeurs plus élevées, jusqu’à environ 20 décès. Donc, tout de même un intervalle de variabilité plus faible de 20 individus.
 
 # Figure 5 : Histogramme du coût total à la fin de 50 simulations
 
@@ -462,8 +462,8 @@ histogramme(coutFinale, "Dépenses")
 # Une grande proportion des simulations atteint des coûts proches du budget maximal, tandis que d’autres présentent des dépenses plus faibles, généralement comprises
 # entre 5 000$ et 15 000$.
 
-# Afin de quantifier ces résultats, la mortalité moyenne sans intervention est d’environ 3000 individus avec une faible variabilité entre les simulations.
-# En présence d’intervention, la mortalité moyenne diminue à quelques individus par simulations, environ 4 à 5. 
+# Afin de quantifier ces résultats, la mortalité moyenne sans intervention est d’environ 3000 individus avec une plus grande variabilité entre les simulations.
+# En présence d’intervention, la mortalité moyenne diminue à quelques individus par simulations, environ 2 à 6. 
 # Le coût moyen de la campagne est d’environ 12 000 à 18 000$ selon les simulations.
 
 
@@ -476,19 +476,20 @@ histogramme(coutFinale, "Dépenses")
 # Les dépenses en vaccination, quant à elles, augmentent de manière plus progressive. Cela indique que la stratégie repose d’abord sur l’identification 
 # des individus infectieux avant de procéder à leur vaccination. plusieurs simulations ont été réalisées pour évaluer l'efficacité de la stratégie.
 
-# L’évolution des états de la population montre que le nombre d’individus infectieux augmente rapidement au début de la simulation, puis diminue progressivement après 
+# L’évolution des états de la population montre que le nombre d’individus infectieux augmente rapidement au début de la simulation, puis diminuent progressivement après 
 # la mise en place de l’intervention. En parallèle, le nombre d’individus vaccinés augmente au cours du temps, ce qui est associé à une diminution du nombre de nouveaux cas.
 
 # La comparaison entre les simulations avec et sans intervention met en évidence une différence dans le nombre total de décès. La mortalité moyenne sans intervention est 
 # plus élevée, tandis qu’en présence d’intervention elle est fortement réduite, avec des valeurs généralement comprises entre environ 2 et 6 individus, et quelques cas pouvant
-# atteindre des valeurs plus élevées (jusqu’à ~20). Les valeurs observées sans intervention sont généralement élevées et concentrées dans un intervalle restreint. À l’inverse,
-# avec intervention, les résultats sont plus dispersés et incluent des valeurs de mortalité plus faibles. Cette dispersion correspond à la nature stochastique du modèle.
+# atteindre des valeurs plus élevées (jusqu’à ~20). Les valeurs observées sans intervention sont généralement élevées et assez dispersées dans un plus grand intervalle de valeur. 
+# À l’inverse, avec intervention, les résultats sont moins dispersés et incluent des valeurs de mortalité plus faibles. La dispersion correspond à la nature stochastique du 
+# modèle.
 
 # La dispersion est aussi visible dans le coût total de la campagne. Certaines simulations utilisent une grande partie du budget disponible, tandis que d’autres
 # consomment moins de ressources. Cela reflète une variabilité dans la propagation de la maladie selon les simulations.
 
 # Dans l’ensemble, les résultats montrent que l’introduction de la stratégie modifie la dynamique de l’épidémie ainsi que la manière dont le budget est utilisé, tout en 
-# introduisant une variabilité plus importante entre les simulations répétées. 
+# réduisant la variabilité entre les simulations répétées. 
 
 # # Discussion
 
