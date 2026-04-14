@@ -438,7 +438,7 @@ figureEtatSelonTemps(S, I, V)
 # pour atteindre environ 150 à 200 individus. Le nombre d’individus susceptibles diminue progressivement au cours du temps, passant d’environ 3750 au début de la simulation 
 # à environ 3300 en fin de simulation.
 
-# Figure 3 : Histogramme du nombre d'agents morts à la fin de 250 simulations sans intervention
+# Figure 3 : Histogramme du nombre d'agents morts à la fin de 50 simulations sans intervention
 
 histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
 
@@ -446,7 +446,7 @@ histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
 # compris entre 2800 et 3200 individus. La distribution est relativement concentrée autour de ces valeurs, avec une faible dispersion. Très peu de simulations présentent 
 # des valeurs significativement plus faibles ou plus élevées.
 
-# Figure 4 : Histogramme du nombre d'agents morts à la fin de 250 simulations avec vaccination
+# Figure 4 : Histogramme du nombre d'agents morts à la fin de 50 simulations avec vaccination
 
 histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
 
@@ -454,7 +454,7 @@ histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
 # avec un nombre de décès variant approximativement entre 1800 et 3000 individus. Plusieurs simulations présentent des valeurs inférieures à 2500 décès, et certaines 
 # descendent jusqu’à environ 2000 décès. La distribution est donc plus dispersée que dans le cas sans intervention.
 
-# Figure 5 : Histogramme du coût total à la fin de 250 simulations
+# Figure 5 : Histogramme du coût total à la fin de 50 simulations
 
 histogramme(coutFinale, "Dépenses")
 
