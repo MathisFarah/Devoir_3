@@ -452,7 +452,7 @@ histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
 
 # La Figure 4 montre la distribution du nombre de décès lorsque la stratégie de dépistage et de vaccination est appliquée. Les valeurs observées sont plus étalées,
 # avec un nombre de décès variant approximativement entre 1 et 20 individus. Plusieurs simulations présentent des valeurs faibles, souvent comprises entre 2 et 6 décès, 
-# et certaines peuvent atteindre des valeurs plus élevées, jusqu’à environ 20 décès. La distribution est donc plus dispersée que dans le cas sans intervention.
+# et certaines peuvent atteindre des valeurs plus élevées, jusqu’à environ 20 décès. 
 
 # Figure 5 : Histogramme du coût total à la fin de 50 simulations
 
