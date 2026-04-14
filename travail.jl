@@ -450,9 +450,9 @@ histogramme(mortSansIntervention, "Nombre d'agents mort sans intervention")
 
 histogramme(mortFinale, "Nombre d'agents morts avec vaccination")
 
-# La Figure 4 montre la distribution du nombre de décès lorsque la stratégie de dépistage et de vaccination est appliquée. Les valeurs observées sont plus étalées, 
-# avec un nombre de décès variant approximativement entre 1800 et 3000 individus. Plusieurs simulations présentent des valeurs inférieures à 2500 décès, et certaines 
-# descendent jusqu’à environ 2000 décès. La distribution est donc plus dispersée que dans le cas sans intervention.
+# La Figure 4 montre la distribution du nombre de décès lorsque la stratégie de dépistage et de vaccination est appliquée. Les valeurs observées sont plus étalées,
+# avec un nombre de décès variant approximativement entre 1 et 20 individus. Plusieurs simulations présentent des valeurs faibles, souvent comprises entre 2 et 6 décès, 
+# et certaines peuvent atteindre des valeurs plus élevées, jusqu’à environ 20 décès. La distribution est donc plus dispersée que dans le cas sans intervention.
 
 # Figure 5 : Histogramme du coût total à la fin de 50 simulations
 
@@ -462,9 +462,8 @@ histogramme(coutFinale, "Dépenses")
 # Une grande proportion des simulations atteint des coûts proches du budget maximal, tandis que d’autres présentent des dépenses plus faibles, généralement comprises
 # entre 5 000$ et 15 000$.
 
-
 # Afin de quantifier ces résultats, la mortalité moyenne sans intervention est d’environ 3000 individus avec une faible variabilité entre les simulations.
-# En présence d’intervention, la mortalité moyenne diminue à environ 2300 individus, avec une variabilité plus importante entre les simulations.
+# En présence d’intervention, la mortalité moyenne diminue à quelques individus par simulations, environ 4 à 5. 
 # Le coût moyen de la campagne est d’environ 12 000 à 18 000$ selon les simulations.
 
 
@@ -480,10 +479,10 @@ histogramme(coutFinale, "Dépenses")
 # L’évolution des états de la population montre que le nombre d’individus infectieux augmente rapidement au début de la simulation, puis diminue progressivement après 
 # la mise en place de l’intervention. En parallèle, le nombre d’individus vaccinés augmente au cours du temps, ce qui est associé à une diminution du nombre de nouveaux cas.
 
-# La comparaison entre les simulations avec et sans intervention met en évidence une différence dans le nombre total de décès. La mortalité moyenne sans intervention
-# est d’environ 3000 individus (± 100), tandis qu’en présence d’intervention elle diminue à environ 2200 individus (± 400). Les valeurs observées sans intervention sont
-# généralement élevées et concentrées dans un intervalle restreint. À l’inverse, avec intervention, les résultats sont plus dispersés et incluent des valeurs de mortalité
-# plus faibles. Cette dispersion est correspond bien à la nature stochastique du modèle.
+# La comparaison entre les simulations avec et sans intervention met en évidence une différence dans le nombre total de décès. La mortalité moyenne sans intervention est 
+# plus élevée, tandis qu’en présence d’intervention elle est fortement réduite, avec des valeurs généralement comprises entre environ 2 et 6 individus, et quelques cas pouvant
+# atteindre des valeurs plus élevées (jusqu’à ~20). Les valeurs observées sans intervention sont généralement élevées et concentrées dans un intervalle restreint. À l’inverse,
+# avec intervention, les résultats sont plus dispersés et incluent des valeurs de mortalité plus faibles. Cette dispersion correspond à la nature stochastique du modèle.
 
 # La dispersion est aussi visible dans le coût total de la campagne. Certaines simulations utilisent une grande partie du budget disponible, tandis que d’autres
 # consomment moins de ressources. Cela reflète une variabilité dans la propagation de la maladie selon les simulations.
